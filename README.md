@@ -114,12 +114,14 @@ to render all [Handlebars](http://handlebarsjs.com) templates.
 
 ## Examples
 
-See the ```/test directory``` for examples how to use this. Some remarks:
+See the ```/test``` directory for examples how to use this. Some remarks:
 
 * ```.hbt``` are [Handlebars](http://handlebarsjs.com)-templates
 * ```.hbp``` are [Handlebars](http://handlebarsjs.com)-partials
 * [Handlebars](http://handlebarsjs.com)-helpers are JS functions and therefore saved as ```.js``` files.
-* ```.html``` files can also be referenced as "files"
+* [Handlebars](http://handlebarsjs.com)-helpers have 1 difference with browser-based versions:
+	* ```js this.Handlebars.compile``` can be used while ```js Handlebars.compile``` is not available due to scoping. (see TODO)
+* ```.html``` files can also be referenced as "files" to use in your GruntFile
 * if [Handlebars](http://handlebarsjs.com)-templates have no markup (like ```{{```) it will copied as plaintext.
 
 ## Contributing
