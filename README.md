@@ -39,13 +39,15 @@ grunt.initConfig({
 
 #### options.partials
 Type: `String` or `Array`  
-Default value: `''`
+Default value: `''`  
+Extension: `.hbp`
 
 A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-partials.
 
 #### options.helpers
 Type: `String` or `Array`  
-Default value: `''`
+Default value: `''`  
+Extension: `.js`
 
 A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-helpers.
 
@@ -74,7 +76,8 @@ grunt.initConfig({
 #### target.options.json
 
 Type: `String` or `Array`  
-Default value: `''`
+Default value: `''`  
+Extension: `.json`
 
 A string or array value that resembles the files to use as context-input (json).
 
@@ -95,12 +98,13 @@ Use this option to overrule/ignore the global helpers variable during this speci
 #### target.files
 
 Type: `Object` or `Array`  
-Default value: `''`
+Default value: `''`  
+Extension: `.hbt` or `.html`
 
 A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-templates.
 
 ```js
-{'destinationFolder/file.html':'inputFolder/input.hbs'}
+{'destinationFolder/file.html':'inputFolder/input.hbt'}
 ```  
 or  
 ```js
@@ -108,14 +112,21 @@ or
 ```  
 to render all [Handlebars](http://handlebarsjs.com) templates.
 
+## Examples
+
+See the ```/test directory``` for examples how to use this. Some remarks:
+
+* ```.hbt``` are [Handlebars](http://handlebarsjs.com)-templates
+* ```.hbp``` are [Handlebars](http://handlebarsjs.com)-partials
+* [Handlebars](http://handlebarsjs.com)-helpers are JS functions and therefore saved as ```.js``` files.
+* ```.html``` files can also be referenced as "files"
+* if [Handlebars](http://handlebarsjs.com)-templates have no markup (like ```{{```) it will copied as plaintext.
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
 0.1.0 - Initial release.
-
-
-
 
 ## TODO
 * fix Handlerbars-global, now this.Handlebars is needed inside Handlebars-helpers
