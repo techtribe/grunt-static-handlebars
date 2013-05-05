@@ -1,4 +1,4 @@
-# STATIC-HANDLEBARS
+# GRUNT-STATIC-HANDLEBARS
 
 > Compile your handlebars templates into static html files.
 
