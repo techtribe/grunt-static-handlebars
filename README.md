@@ -1,9 +1,9 @@
-# static-handlebars
+# STATIC-HANDLEBARS
 
 > Compile your handlebars templates into static html files.
 
 ## Getting Started
-This plugin requires Grunt `~0.4.1`
+This plugin requires Grunt `~0.4.1` which uses [Node.js](http://nodejs.org/download).
 
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
@@ -17,7 +17,7 @@ One the plugin has been installed, it may be enabled inside your Gruntfile with 
 grunt.loadNpmTasks('static-handlebars');
 ```
 
-## The "static_handlebars" task
+## Documentation
 
 ### Overview
 In your project's Gruntfile, add a section named `static_handlebars` to the data object passed into `grunt.initConfig()`.
@@ -37,59 +37,90 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
-Type: `String`
-Default value: `',  '`
+#### options.partials
+Type: `String` or `Array`  
+Default value: `''`
 
-A string value that is used to do something with whatever.
+A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-partials.
 
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
+#### options.helpers
+Type: `String` or `Array`  
+Default value: `''`
 
-A string value that is used to do something else with whatever else.
+A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-helpers.
 
-### Usage Examples
-
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
-
-```js
-grunt.initConfig({
-  static_handlebars: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
-```
-
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+#### target
 
 ```js
 grunt.initConfig({
   static_handlebars: {
     options: {
-      separator: ': ',
-      punctuation: ' !!!',
+    	partials:'',
+    	helpers:''
     },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
+    target: {
+        // Target-specific file lists and/or options go here.
+    	options:{
+    		json:'',
+    		partials:[],
+    		helpers:[]
+    	},
+    	files:{}
     },
   },
 })
 ```
 
+#### target.options.json
+
+Type: `String` or `Array`  
+Default value: `''`
+
+A string or array value that resembles the files to use as context-input (json).
+
+#### target.options.partials
+
+Type: `Array`  
+Default value: `options.partials`
+
+Use this option to overrule/ignore the global partials variable during this specific target.
+
+#### target.options.helpers
+
+Type: `Array`  
+Default value: `options.helpers`
+
+Use this option to overrule/ignore the global helpers variable during this specific target.
+
+#### target.files
+
+Type: `Object` or `Array`  
+Default value: `''`
+
+A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-templates.
+
+```js
+{'destinationFolder/file.html':'inputFolder/input.hbs'}
+```  
+or  
+```js
+{'destinationFolder/*.html':'inputFolder/*.hbs'}
+```  
+to render all [Handlebars](http://handlebarsjs.com) templates.
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
+0.1.0 - Initial release.
 
 
 
 
 ## TODO
-* needs to be same filenames, otherwise just add single one separately
+* fix Handlerbars-global, now this.Handlebars is needed inside Handlebars-helpers
+* (?) Handlebars inline declaration
+* (?) option to provide string and no json-file?!
+* (?) cli-option
+* A general json file as default context/data
+* Add "-" to partials, possible? what kind of restrictions exist?

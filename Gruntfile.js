@@ -33,9 +33,7 @@ module.exports = function(grunt) {
     staticHandlebars: {
         options:{
             partials:'test/fixtures/partials/**/*.hbp',
-//            partials:'test/fixtures/partials/base.hbp',
-            helpers:'test/fixtures/helpers/**/*.js',
-            base: 'test/fixtures/'
+            helpers:'test/fixtures/helpers/**/*.js'
         },
         usePartials:{
             options:{
