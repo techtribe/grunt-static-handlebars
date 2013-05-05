@@ -1,0 +1,19 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>{{title}}</title>
+</head>
+<body>
+    <header></header>
+{{> nav}}
+    {{! Some content which can be anything can be added below but this will not show up in the generated html }}
+    <section>
+        <article>
+            <h1>{{page.title}}</h1>
+            <div>{{page.content}}</div>
+        </article>
+    </section>
+    <footer>{{footer}}</footer>
+</body>
+</html>

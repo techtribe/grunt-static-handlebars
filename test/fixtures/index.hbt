@@ -1,0 +1,7 @@
+{{> elke}}
+{{case test="iets anders"}}
+{{base test="ja" test2="nee"}}
+{{{var title="leuk"}}}
+{{! dus}}
+<!-- maar dit wel weer -->
+{{{test title="leuk"}}}
