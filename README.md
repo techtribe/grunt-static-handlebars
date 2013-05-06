@@ -116,6 +116,7 @@ See the ```/test``` directory for examples how to use this. Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+0.3.1 - Relative path bug fixed for [Handlebars](htt://handlebarsjs.com)-helpers  
 0.3.0 - Rewrite to support helpers that use partials + added more tests  
 0.2.0 - Added global Handlebars object + fixed partials-naming (+/-/_ added)  
 0.1.0 - Initial release.

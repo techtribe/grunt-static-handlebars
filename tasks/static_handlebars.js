@@ -186,7 +186,7 @@ module.exports = function(grunt) {
     files = grunt.file.expand(grunt.config.get(NAME).options.helpers);
     files.forEach(function(file){
         //outside tasks-directory
-        var s = require('./../'+file);
+        var s = require(process.cwd()+'/'+file);
         Handlebars.registerHelper(getBasename(file),s);
     });
     files = null;
