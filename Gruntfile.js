@@ -48,7 +48,7 @@ module.exports = function(grunt) {
                 partials:[]
             },
             files:{
-                'tmp/useHelpers/*.html':'test/fixtures/homepage/*.hbt'
+                'tmp/useHelpers/*.html':'test/fixtures/help/*.hbt'
             }
         },
         usePartialsAndHelpers:{
@@ -90,6 +90,9 @@ module.exports = function(grunt) {
                 {'tmp/renderMultiTemplates/sub2/**/*.html':'test/fixtures/faq/**/*.hbt'}
             ]
         },
+        renderInclude:{
+            files:{'tmp/renderInclude/*.html':'test/fixtures/campaign/*.hbt'}
+        }
     },
 
     // Unit tests.

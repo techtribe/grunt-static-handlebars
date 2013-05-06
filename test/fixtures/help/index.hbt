@@ -1,0 +1,13 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>{{title}}</title>
+</head>
+<body>
+<header>Some information</header>
+{{! Some content which can be anything can be added below but this will not show up in the generated html }}
+<div>{{renderContent data="This content is complete and added behind renderContent-helper context."}}</div>
+<footer>{{footer}}</footer>
+</body>
+</html>

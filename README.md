@@ -38,6 +38,7 @@ grunt.initConfig({
 ### Options
 
 #### options.partials
+
 Type: `String` or `Array`  
 Default value: `''`  
 Extension: `.hbp`
@@ -45,6 +46,7 @@ Extension: `.hbp`
 A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-partials.
 
 #### options.helpers
+
 Type: `String` or `Array`  
 Default value: `''`  
 Extension: `.js`
@@ -63,9 +65,7 @@ grunt.initConfig({
     target: {
         // Target-specific file lists and/or options go here.
     	options:{
-    		json:'',
-    		partials:[],
-    		helpers:[]
+    		json:''
     	},
     	files:{}
     },
@@ -80,20 +80,6 @@ Default value: `''`
 Extension: `.json`
 
 A string or array value that resembles the files to use as context-input (json).
-
-#### target.options.partials
-
-Type: `Array`  
-Default value: `options.partials`
-
-Use this option to overrule/ignore the global partials variable during this specific target.
-
-#### target.options.helpers
-
-Type: `Array`  
-Default value: `options.helpers`
-
-Use this option to overrule/ignore the global helpers variable during this specific target.
 
 #### target.files
 
@@ -119,8 +105,9 @@ See the ```/test``` directory for examples how to use this. Some remarks:
 * ```.hbt``` are [Handlebars](http://handlebarsjs.com)-templates
 * ```.hbp``` are [Handlebars](http://handlebarsjs.com)-partials
 * [Handlebars](http://handlebarsjs.com)-helpers are JS functions and therefore saved as ```.js``` files.
-* [Handlebars](http://handlebarsjs.com)-helpers have 1 difference with browser-based versions:
+* [Handlebars](http://handlebarsjs.com)-helpers can use:
 	* ```js Handlebars.compile``` can be used in partials/helpers (like the frontend way)
+	* ```js _``` can be used as ```lodash``` util class in your partials/helpers
 * ```.html``` files can also be referenced as "files" to use in your GruntFile
 * filenames can be connected by ```-```, ```+```,```_```
 * if [Handlebars](http://handlebarsjs.com)-templates have no markup (like ```{{```) it will copied as plaintext.
@@ -129,6 +116,7 @@ See the ```/test``` directory for examples how to use this. Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+0.3.0 - Rewrite to support helpers that use partials + added more tests  
 0.2.0 - Added global Handlebars object + fixed partials-naming (+/-/_ added)  
 0.1.0 - Initial release.
 
@@ -137,6 +125,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 * (?) option to provide string and no json-files as partials/helpers
 * (?) cli-option
 * (?) other output than .html
-* Add more partials/helpers in examples
 * A general json file as default context/data
-* (?) Development / production support
+* (?) add or ignore target.options.partials/helpers
+* (?) detect duplicate definitions of context &amp; helpers/partials
+* (?) use lowercase to detect wrong definitions of code or not useful

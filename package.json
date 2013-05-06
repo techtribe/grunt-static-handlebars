@@ -1,7 +1,7 @@
 {
   "name": "grunt-static-handlebars",
   "description": "Compile your handlebars templates into static html files.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "homepage": "https://github.com/techtribe/grunt-static-handlebars",
   "author": {
     "name": "Joey van Dijk",
@@ -29,8 +29,7 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "handlebars": ">= 1",
-    "lodash":">= 1.2.1"
+    "handlebars": ">= 1"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.1.1",

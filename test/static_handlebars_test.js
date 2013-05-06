@@ -154,4 +154,13 @@ exports.static_handlebars = {
 
         test.done();
     },
+    renderInclude: function(test){
+        test.expect(1);
+
+        var actual = grunt.file.read('tmp/renderInclude/index.html');
+        var expected = grunt.file.read('test/expected/renderInclude/index.html');
+        test.equal(actual, expected, 'should describe what to expect at /campaign/index.html');
+
+        test.done();
+    },
 };
