@@ -128,7 +128,7 @@ See the ```/test``` directory for examples how to use this. Some remarks:
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
-## Release History
+## Releases
 0.2.0 - Added global Handlebars object + fixed partials-naming (+/-/_ added)
 0.1.0 - Initial release.
 
