@@ -242,7 +242,7 @@ module.exports = function(grunt) {
                     try{
                         //if file not exist, grunt will pop up an error
                         if(options.useSameFilename){
-                            jsonFile = filepath.split('.').shift()+'.json';
+                            jsonFile = filepath.substr(0,filepath.lastIndexOf('.')) + '.json';
                         }else{
                             //another json file provided
                             jsonFile = options.json[i];

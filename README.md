@@ -135,5 +135,6 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 * (?) Handlebars inline declaration
 * (?) option to provide string and no json-file?!
 * (?) cli-option
+* (?) other output than .html
 * A general json file as default context/data
 * Add "-" to partials, possible? what kind of restrictions exist?
