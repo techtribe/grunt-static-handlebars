@@ -10,7 +10,8 @@
 
 module.exports = function(grunt) {
     var _ = require('lodash');
-    var Test100 = {};
+    //ensure Handlebars can be used inside partials/helpers
+    GLOBAL.Handlebars = require('handlebars');
 
     grunt.file.defaultEncoding = 'utf8';
 
@@ -66,9 +67,9 @@ module.exports = function(grunt) {
         matches.forEach(function(handlebar){
             var result;
             if(type === TYPE_PARTIAL){
-                result = new RegExp(/\{{2}\>\s(\w+)/).exec(handlebar);
+                result = new RegExp(/\{{2}\>\s(\w+([\-\+\_]\w+)?)/).exec(handlebar);
             }else if(type === TYPE_HELPER){
-                result = new RegExp(/\{{2}(\w+)/).exec(handlebar);
+                result = new RegExp(/\{{2}(\w+([\-\+\_]\w+)?)/).exec(handlebar);
             }else{
                 //TODO do nothing?
             }
@@ -286,7 +287,6 @@ module.exports = function(grunt) {
                                 handlebars.registerHelper(item,function helperWrapper(context,options){
                                     var args = Array.prototype.slice.call(arguments);
                                     args.unshift(this);
-                                    this.Handlebars = handlebars;
                                     return reference.helpers[item].apply(this,args);
                                 });
                             }else if(reference.helpers[item] === undefined && isCntxt){

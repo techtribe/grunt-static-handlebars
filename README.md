@@ -120,21 +120,23 @@ See the ```/test``` directory for examples how to use this. Some remarks:
 * ```.hbp``` are [Handlebars](http://handlebarsjs.com)-partials
 * [Handlebars](http://handlebarsjs.com)-helpers are JS functions and therefore saved as ```.js``` files.
 * [Handlebars](http://handlebarsjs.com)-helpers have 1 difference with browser-based versions:
-	* ```js this.Handlebars.compile``` can be used while ```js Handlebars.compile``` is not available due to scoping. (see TODO)
+	* ```js Handlebars.compile``` can be used in partials/helpers (like the frontend way)
 * ```.html``` files can also be referenced as "files" to use in your GruntFile
+* filenames can be connected by ```-```, ```+```,```_```
 * if [Handlebars](http://handlebarsjs.com)-templates have no markup (like ```{{```) it will copied as plaintext.
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+0.2.0 - Added global Handlebars object + fixed partials-naming (+/-/_ added)
 0.1.0 - Initial release.
 
 ## TODO
-* fix Handlerbars-global, now this.Handlebars is needed inside Handlebars-helpers
 * (?) Handlebars inline declaration
-* (?) option to provide string and no json-file?!
+* (?) option to provide string and no json-files as partials/helpers
 * (?) cli-option
 * (?) other output than .html
+* Add more partials/helpers in examples
 * A general json file as default context/data
-* Add "-" to partials, possible? what kind of restrictions exist?
+* (?) Development / production support

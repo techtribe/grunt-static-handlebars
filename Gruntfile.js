@@ -89,7 +89,7 @@ module.exports = function(grunt) {
                 {'tmp/renderMultiTemplates/sub1/**/*.html':'test/fixtures/faq/**/*.hbt'},
                 {'tmp/renderMultiTemplates/sub2/**/*.html':'test/fixtures/faq/**/*.hbt'}
             ]
-        }
+        },
     },
 
     // Unit tests.
