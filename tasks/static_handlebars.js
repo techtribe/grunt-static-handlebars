@@ -155,6 +155,24 @@ module.exports = function(grunt) {
         //check if variable is found in context file (JSON)
         return grunt.util._has(context,name);
     }
+    
+    function initOptions(){
+        if(files === undefined){
+            //load all partials
+            files = grunt.file.expand(grunt.config.get(NAME).options.partials);
+            files.forEach(function(file){
+                Handlebars.registerPartial(getBasename(file),grunt.file.read(file));
+            });
+
+            //load all helpers
+            files = grunt.file.expand(grunt.config.get(NAME).options.helpers);
+            files.forEach(function(file){
+                //outside tasks-directory
+                var s = require(process.cwd()+'/'+file);
+                Handlebars.registerHelper(getBasename(file),s);
+            });
+        }
+    }
 
     //ensure Handlebars can be used inside partials/helpers
     if(GLOBAL.Handlebars){
@@ -176,23 +194,11 @@ module.exports = function(grunt) {
         errors:[]
     };
     var files;
-    //load all partials
-    files = grunt.file.expand(grunt.config.get(NAME).options.partials);
-    files.forEach(function(file){
-        Handlebars.registerPartial(getBasename(file),grunt.file.read(file));
-    });
-
-    //load all helpers
-    files = grunt.file.expand(grunt.config.get(NAME).options.helpers);
-    files.forEach(function(file){
-        //outside tasks-directory
-        var s = require(process.cwd()+'/'+file);
-        Handlebars.registerHelper(getBasename(file),s);
-    });
-    files = null;
 
     //register task
     grunt.registerMultiTask(NAME, 'Create static html from handlebars-files.', function() {
+        initOptions();
+
         // Merge task-specific and/or target-specific options with these defaults.
         var options = this.options({
             skipRendering:false,
@@ -225,7 +231,7 @@ module.exports = function(grunt) {
         //retrieve base folders to copy correctly into destination folders
         options.subDirectories = sourceDirectory(this.data.files,this.target);
 
-        grunt.log.write('Rendering "'+this.target+'" ...');
+        grunt.log.write('Rendering "'+this.target+'" ...\n');
 
         // Iterate over all specified file groups.
         var errors = [];
