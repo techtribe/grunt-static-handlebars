@@ -32,24 +32,6 @@ module.exports = function(grunt) {
         return output;
     }
 
-    function getOutputFilename(filename,input){
-        var glob = isGlob(filename);
-        var output = '';
-        if(glob != undefined){
-            var extension = filename.split('.');
-            //TODO never possible?
-            if(glob.charAt(glob.length-1) === '/'){
-                output = glob+getBasename(input)+'.'+extension[1];
-            }else{
-                output = glob+getBasename(input)+'/.'+extension[1];
-            }
-        }else{
-            //just a file
-            output= filename;
-        }
-        return output;
-    }
-
     function isGlob(filename) {
         var match = filename.match(/[^\*]*/);
         if (match[0] !== filename) return match.pop();
@@ -247,7 +229,7 @@ module.exports = function(grunt) {
                 //detect if handlebars or just plain html
                 if(hbs === null){
                     //just a html file, no handlebars
-                    grunt.file.write(getOutputFilename(f.dest,filepath),file);
+                    grunt.file.write(destinationPath(f.dest,filepath,options.subDirectories),file);
                 }else{
                     //get context data to use with handlebars templates
                     var context = '';
