@@ -180,6 +180,7 @@ module.exports = function(grunt) {
     }
     GLOBAL.Handlebars = require('handlebars');
     GLOBAL._ = grunt.util._;
+    GLOBAL.grunt = grunt;
     //local
     var handlebars = GLOBAL.Handlebars;
 
