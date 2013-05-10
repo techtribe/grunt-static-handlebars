@@ -243,7 +243,11 @@ module.exports = function(grunt) {
                             //another json file provided
                             jsonFile = options.json[i];
                         }
-                        context = JSON.parse(grunt.file.read(jsonFile,{encoding:'utf8'}));
+                        if(grunt.file.exists(jsonFile)){
+                            context = JSON.parse(grunt.file.read(jsonFile,{encoding:'utf8'}));
+                        }else{
+                            context = {};
+                        }
                     }catch(e){
                         grunt.log.write('\n');
                         if(e instanceof SyntaxError){

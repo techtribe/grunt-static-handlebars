@@ -116,6 +116,7 @@ See the ```/test``` directory for examples how to use this. Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+0.4.3 - If no .json file is mentioned, the template context will be defaulted to {}  
 0.4.2 - Fixed the processing of static files without any [Handlebars](htt://handlebarsjs.com)  
 0.4.1 - Added grunt as global variable
 0.4.0 - Relative path rewrite to support ```js grunt.file.setBase()```  
