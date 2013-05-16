@@ -163,4 +163,29 @@ exports.static_handlebars = {
 
         test.done();
     },
+    renderIgnore: function(test){
+        test.expect(3);
+
+        var actual = grunt.file.read('tmp/renderIgnore/index.html');
+        var expected = grunt.file.read('test/expected/renderIgnore/index.html');
+        test.equal(actual, expected, 'should describe what to expect at /ignore');
+
+        actual = null;
+        try{
+            actual = grunt.file.read('tmp/renderIgnore/a_config_file.cfg');
+            test.equal(actual, null, 'should be empty');
+        }catch(e){
+            test.equal(actual, null, 'should be empty');
+        }
+
+        actual = null;
+        try{
+            actual = grunt.file.read('tmp/renderIgnore/another_config_file.cfg');
+            test.equal(actual, null, 'should be empty');
+        }catch(e){
+            test.equal(actual, null, 'should be empty');
+        }
+
+        test.done();
+    },
 };

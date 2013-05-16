@@ -102,8 +102,8 @@ to render all [Handlebars](http://handlebarsjs.com) templates.
 
 See the ```/test``` directory for examples how to use this. Some remarks:
 
-* ```.hbt``` are [Handlebars](http://handlebarsjs.com)-templates
-* ```.hbp``` are [Handlebars](http://handlebarsjs.com)-partials
+* ```.hbt``` are [Handlebars](http://handlebarsjs.com)-templates but can be any extension (.html, .htm, .hbs, etc)
+* ```.hbp``` are [Handlebars](http://handlebarsjs.com)-partials but can be any extension (.html, .htm, .hbs, etc)
 * [Handlebars](http://handlebarsjs.com)-helpers are JS functions and therefore saved as ```.js``` files.
 * [Handlebars](http://handlebarsjs.com)-helpers can use:
 	* ```js Handlebars.compile``` can be used in partials/helpers (like the frontend way)

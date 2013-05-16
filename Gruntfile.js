@@ -92,6 +92,9 @@ module.exports = function(grunt) {
         },
         renderInclude:{
             files:{'tmp/renderInclude/*.html':'test/fixtures/campaign/*.hbt'}
+        },
+        renderIgnore:{
+            files:{'tmp/renderIgnore/*.html':'test/fixtures/ignore/*.html'}
         }
     },
 
