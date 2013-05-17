@@ -9,6 +9,29 @@
 'use strict';
 
 module.exports = function(grunt) {
+    var md5 = require('MD5');
+
+    //ensure Handlebars can be used inside partials/helpers
+    var GLOBAL_OBJECT = GLOBAL;
+    if(GLOBAL_OBJECT.Handlebars){
+        GLOBAL_OBJECT.Handlebars = null;
+    }
+    GLOBAL_OBJECT.Handlebars = require('handlebars');
+    GLOBAL_OBJECT._ = grunt.util._;
+    GLOBAL_OBJECT.grunt = grunt;
+    //local
+    var handlebars = GLOBAL_OBJECT.Handlebars;
+
+    //variables
+    var NAME = 'staticHandlebars';
+    var handlebarsRegex = /\{\{([\s\S]+?)\}\}/g;
+    var reference = {
+        partials:{},
+        helpers:{},
+        errors:[]
+    };
+    var files;
+
     grunt.file.defaultEncoding = 'utf8';
 
     function getBasename(filename){
@@ -30,37 +53,6 @@ module.exports = function(grunt) {
             reference.errors.push({file:filename,error:'Invalid syntax of filename: no path provided ("/")'});
         }
         return output;
-    }
-
-    function isGlob(filename) {
-        var match = filename.match(/[^\*]*/);
-        if (match[0] !== filename) return match.pop();
-    }
-
-    function getRegexName(matches,type){
-        //TODO {{# ?
-        //find unique names of handlebars-identifiers being used
-        var list = [];
-        //TODO while loop faster?
-        matches.forEach(function(handlebar){
-            var result;
-            if(type === TYPE_PARTIAL){
-                result = new RegExp(/\{{2}\>\s(\w+([\-\+\_]\w+)?)/).exec(handlebar);
-            }else if(type === TYPE_HELPER){
-                result = new RegExp(/\{{2}(\w+([\-\+\_]\w+)?)/).exec(handlebar);
-            }else{
-                //TODO do nothing?
-            }
-            if(result != null && result[1] != undefined){
-                if(result.index === 0){
-                    //ignore {{{ markup
-                    list.push(result[1]);
-                }
-            }
-        });
-        list = grunt.util._.uniq(list);
-        //builtin helpers are used with {{# so do not need to be "rejected"
-        return list;
     }
 
     function sourceDirectory(data,task){
@@ -109,35 +101,27 @@ module.exports = function(grunt) {
 
     function destinationPath(destination,filepath,subDirectories){
         //find subdirectory
-        var path ;
+        var path, destinationBasePath;
         if(subDirectories.length === 0){
             //same path, no deep folders
             if(destination.indexOf('*') === -1){
                 path = destination;
             }else{
-                var s = destination.split('*').shift();
-                path = s + filepath.split('/').pop();
+                destinationBasePath = destination.split('*').shift();
+                path = destinationBasePath + filepath.split('/').pop();
             }
         }else{
             //subdirectories found, so determine how deep a file needs to be brought
             var found = grunt.util._.find(subDirectories,function(item){
-                if(filepath.indexOf(item) !== -1){
-                    return true;
-                }else{
-                    return false;
-                }
+                return (filepath.indexOf(item) !== -1);
             });
-            var s = destination.split('*').shift();
-            path = s + filepath.replace(found,'');
+            destinationBasePath = destination.split('*').shift();
+//          grunt.log.debug('Destination path:', destination, filepath, subDirectories, found, s);
+            path = destinationBasePath + filepath.replace(found,'');
         }
-        return replaceExtension(path,destination.split('.').pop());
+        return replaceExtension(path, destination.split('.').pop());
     }
 
-    function isContext(name,context){
-        //check if variable is found in context file (JSON)
-        return grunt.util._has(context,name);
-    }
-    
     function initOptions(){
         if(files === undefined){
             //load all partials
@@ -156,27 +140,169 @@ module.exports = function(grunt) {
         }
     }
 
-    //ensure Handlebars can be used inside partials/helpers
-    if(GLOBAL.Handlebars){
-        GLOBAL.Handlebars = null;
+    function requestPackage(files, otherFiles, packageType, packages) {
+        var parts = packageType.split(' ');
+        var extension = parts[0];
+        var qualifier = parts.length > 1 ? '-' + parts[1] : '';
+        if (files.length > 0) {
+            var spec = files.join('\t');
+            try {
+                var hash = md5(spec);
+//              grunt.log.debug('Line:', [extension, hash, spec].join('\t'));
+                if (!packages[packageType]) {
+                    packages[packageType] = [];
+                }
+                packages[packageType][hash] = files.slice(0);
+            } catch (error) {
+                grunt.log.error('Error in adding request:', error);
+                throw error;
+            }
+//          grunt.log.debug('Qualifier: ' + packageType + ":", qualifier);
+            var fileName = extension + '/' + hash + qualifier + '.' + extension;
+            var fileSpec = qualifier ? { path: fileName, qualifier: parts[1] } : fileName;
+            otherFiles.push(fileSpec);
+        }
     }
-    GLOBAL.Handlebars = require('handlebars');
-    GLOBAL._ = grunt.util._;
-    GLOBAL.grunt = grunt;
-    //local
-    var handlebars = GLOBAL.Handlebars;
 
-    //variables
-    var NAME = 'staticHandlebars';
-    var TYPE_PARTIAL = 0;
-    var TYPE_HELPER = 1;
-    var handlebarsRegex = /\{\{([\s\S]+?)\}\}/g;
-    var reference = {
-        partials:{},
-        helpers:{},
-        errors:[]
-    };
-    var files;
+    function replaceFiles(context, packages) {
+        if (!context.files) {
+            context.files = ['favicon.ico'];
+        }
+        var files = context.files;
+        var packageFiles = {};
+        var otherFiles = [];
+        var i = 0;
+        var il = files.length;
+        while (i < il) {
+            var file = files[i];
+            var fileName;
+            var qualifier;
+            if (typeof file === 'string') {
+                fileName = file;
+                qualifier = '';
+            } else {
+                fileName = file.path;
+                qualifier = file.qualifier;
+            }
+
+            var extension = fileName.split('.').pop();
+            var packageType = extension + (qualifier ? ' ' + qualifier : '');
+            if (!packageFiles[packageType]) {
+                packageFiles[packageType] = [];
+            }
+            if (extension == 'js' || extension == 'css' || qualifier) {
+                packageFiles[packageType].push(fileName);
+            } else {
+                otherFiles.push(fileName);
+            }
+            i++;
+        }
+        for (var key in packageFiles) {
+            if (packageFiles.hasOwnProperty(key)) {
+                requestPackage(packageFiles[key], otherFiles, key, packages);
+            }
+        }
+        context.files = otherFiles;
+        grunt.log.debug('Other files:', otherFiles);
+    }
+
+    function generatePackages(packages, options) {
+        for (var packageType in packages) {
+            if (!packages.hasOwnProperty(packageType)) {
+                continue;
+            }
+            var parts = packageType.split(' ');
+            var extension = parts[0];
+            var qualifier = parts.length > 1 ? '-' + parts[1] : '';
+//          grunt.log.debug('Package type:', packageType, parts, extension, qualifier);
+            var packageGroupDirectory = options.packageDirectory + '/' + extension;
+            var suffix = qualifier + '.' + extension;
+            generatePackageGroup(packages[packageType], options.sourceRoot, packageGroupDirectory, suffix, '\n\n');
+        }
+    }
+
+    function generatePackageGroup(packageList, sourceRoot, packageGroupDirectory, suffix, separator) {
+        suffix = suffix || '';
+        separator = separator || '';
+        for (var hash in packageList) {
+            if (packageList.hasOwnProperty(hash)) {
+                var sources = packageList[hash];
+                var contentList = _.map(sources, function(source) {
+                    var filePath = typeof source === 'string' ? source : source.path;
+                    filePath = sourceRoot + '/' + filePath;
+                    if (!grunt.file.exists(filePath)) {
+                        grunt.log.warn('Source file "' + filePath + '" not found.');
+                        return '';
+                    } else {
+                        grunt.log.debug('Read source file "' + filePath + '"');
+                        return grunt.file.read(filePath);
+                    }
+                });
+                var targetFile = packageGroupDirectory + '/' + hash + suffix;
+                var targetContent = contentList.join(separator);
+                grunt.log.debug('Generate package: ' + targetFile + ': [' + (targetContent.length) + ']');
+                grunt.file.write(targetFile, targetContent);
+            }
+        }
+    }
+
+    function extend(target, source) {
+        for (var key in source) {
+            if (!source.hasOwnProperty(key)) {
+                continue;
+            }
+//          grunt.log.debug("Key suffix:", key.substring(-4))
+            var pos = key.length - 4;
+            if (key.substring(pos) == '%add') {
+                var modifyKey = key.substring(0, pos);
+//              grunt.log.debug("Modify key:", modifyKey);
+                if (target[modifyKey]) {
+                    target[modifyKey] = _.union(target[modifyKey], source[key]);
+//                  grunt.log.debug('Modified value:', target[modifyKey]);
+                } else {
+                    target[modifyKey] = source[key];
+                }
+            } else {
+                target[key] = source[key];
+            }
+        }
+//      grunt.log.debug("Extended:", target);
+    }
+
+    function getContext(basePath, jsonFile, prefix) {
+        var context = { targetPath: null };
+        prefix = prefix || '';
+        if (grunt.file.exists(jsonFile)){
+            var childContext = { extends: [] };
+            try {
+                // TODO JSON.parse works, but grunt.file.readJSON not
+                // if file not exist, grunt will pop up an error
+                childContext = JSON.parse(grunt.file.read(jsonFile, { encoding: 'utf8' }));
+            }catch (e) {
+                grunt.log.write('\n');
+                if (e instanceof SyntaxError) {
+                    grunt.fail.fatal('Your JSON file ('+jsonFile+') has no valid syntax', e);
+                }else if (e.origError.errno === 34) {
+                    //no json file found
+                    grunt.fail.fatal(new Error('No context file (like ' + e.origError.path+') provided at ' + jsonFile + ' . See documentation for more information.'));
+                }else{
+                    grunt.fail.fatal(e);
+                }
+            }
+            if (childContext.extends) {
+                var supers = typeof childContext.extends === 'string' ? [childContext.extends] : childContext.extends;
+                _.each(supers, function(superContextFile) {
+                    var superContext = getContext(basePath, basePath + '/' + superContextFile, prefix + '  ');
+                    extend(context, superContext);
+                });
+                extend(context, childContext);
+            } else {
+                context = childContext;
+            }
+        }
+        grunt.log.debug(prefix + 'Got context:', jsonFile);
+        return context;
+    }
 
     //register task
     grunt.registerMultiTask(NAME, 'Create static html from handlebars-files.', function() {
@@ -184,10 +310,12 @@ module.exports = function(grunt) {
 
         // Merge task-specific and/or target-specific options with these defaults.
         var options = this.options({
+            pageRoot: '.',
             skipRendering:false,
             useSameFilename:true,
             subDirectories:[]
         });
+        grunt.log.debug('Options:', options);
 
         //check if template-data has the same basename
         if(options.json){
@@ -195,16 +323,8 @@ module.exports = function(grunt) {
         }
 
         //check if helpers or partials are overruled
-        if(grunt.util._.isEmpty(options.helpers)){
-            options.disableHelpers = true;
-        }else{
-            options.disableHelpers = false;
-        }
-        if(grunt.util._.isEmpty(options.partials)){
-            options.disablePartials = true;
-        }else{
-            options.disablePartials = false;
-        }
+        options.disableHelpers = grunt.util._.isEmpty(options.helpers);
+        options.disablePartials = grunt.util._.isEmpty(options.partials);
 
         if(typeof options.json === "string"){
             options.json = [options.json];
@@ -217,6 +337,7 @@ module.exports = function(grunt) {
         grunt.log.write('Rendering "'+this.target+'" ...\n');
 
         // Iterate over all specified file groups.
+        var packages = {};
         var errors = [];
         var i = 0;
         this.files.forEach(function(f) {
@@ -227,38 +348,20 @@ module.exports = function(grunt) {
                 var output = '';
                 var hbs = file.match(handlebarsRegex);
                 //detect if handlebars or just plain html
-                if(hbs === null){
-                    //just a html file, no handlebars
-                    grunt.file.write(destinationPath(f.dest,filepath,options.subDirectories),file);
-                }else{
+                if(hbs){
+                    grunt.log.debug("Process page:", filepath);
                     //get context data to use with handlebars templates
-                    var context = '';
-                    //TODO JSON.parse works, but grunt.file.readJSON not
                     var jsonFile;
-                    try{
-                        //if file not exist, grunt will pop up an error
-                        if(options.useSameFilename){
-                            jsonFile = filepath.substr(0,filepath.lastIndexOf('.')) + '.json';
-                        }else{
-                            //another json file provided
-                            jsonFile = options.json[i];
-                        }
-                        if(grunt.file.exists(jsonFile)){
-                            context = JSON.parse(grunt.file.read(jsonFile,{encoding:'utf8'}));
-                        }else{
-                            context = {};
-                        }
-                    }catch(e){
-                        grunt.log.write('\n');
-                        if(e instanceof SyntaxError){
-                            grunt.fail.fatal('Your JSON file ('+jsonFile+') has no valid syntax',e);
-                        }else if(e.origError.errno === 34){
-                            //no json file found
-                            grunt.fail.fatal(new Error('No context file (like '+ e.origError.path+') provided at '+filepath+' . See documentation for more information.'));
-                        }else{
-                            grunt.fail.fatal(e);
-                        }
+                    if(options.useSameFilename){
+                        jsonFile = filepath.substr(0,filepath.lastIndexOf('.')) + '.json';
+                    }else{
+                        //another json file provided
+                        jsonFile = options.json[i];
                     }
+                    var context = getContext(options.pageRoot, jsonFile);
+                    grunt.log.debug('Context:', context);
+
+                    replaceFiles(context, packages);
 
                     try{
                         //ignore errors with used helpers/partials
@@ -273,16 +376,33 @@ module.exports = function(grunt) {
                     }
 
                     //determine output path
-                    var path = destinationPath(f.dest,filepath,options.subDirectories);
+                    var path;
+                    if (context.targetPath) {
+                        path = destinationPath(f.dest,context.targetPath,options.subDirectories);
+                        grunt.log.debug("Custom path:", path);
+                    } else {
+                        path = destinationPath(f.dest,filepath,options.subDirectories);
+                        var baseName = path.split('/').pop();
+                        if (baseName != 'index.html') {
+                            path = path.replace(/[/]*([.][^/]*)?$/, '/index.html');
+                        }
+                        grunt.log.debug("Standard path:", path);
+                    }
 
                     //save
                     grunt.file.write(path,output);
+                }else{
+                    //just a html file, no handlebars
+                    grunt.file.write(destinationPath(f.dest,filepath,options.subDirectories),file);
                 }
             });
             i++;
         });
+        grunt.log.debug('Packages:', packages);
         //succeeded
         grunt.log.ok();
+
+        generatePackages(packages, options);
 
         if(errors.length > 0){
             grunt.log.error('\n##### ERRORS #####');

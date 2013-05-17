@@ -29,7 +29,8 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "handlebars": ">= 1"
+    "handlebars": ">= 1",
+    "MD5": ">=1.0"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.1.1",
