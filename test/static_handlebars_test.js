@@ -84,15 +84,15 @@ exports.static_handlebars = {
     renderTemplateDirectory: function(test){
         test.expect(3);
 
-        var actual = grunt.file.read('tmp/renderTemplateDirectory/ourpeople.html');
+        var actual = grunt.file.read('tmp/renderTemplateDirectory/ourpeople/index.html');
         var expected = grunt.file.read('test/expected/renderTemplateDirectory/ourpeople.html');
         test.equal(actual, expected, 'should describe what to expect at /ourpeople.html');
 
-        actual = grunt.file.read('tmp/renderTemplateDirectory/ourproducts.html');
+        actual = grunt.file.read('tmp/renderTemplateDirectory/ourproducts/index.html');
         expected = grunt.file.read('test/expected/renderTemplateDirectory/ourproducts.html');
         test.equal(actual, expected, 'should describe what to expect at /ourproducts.html');
 
-        actual = grunt.file.read('tmp/renderTemplateDirectory/ourservice.html');
+        actual = grunt.file.read('tmp/renderTemplateDirectory/ourservice/index.html');
         expected = grunt.file.read('test/expected/renderTemplateDirectory/ourservice.html');
         test.equal(actual, expected, 'should describe what to expect at /ourservice.html');
 
@@ -128,27 +128,27 @@ exports.static_handlebars = {
     renderMultiTemplates: function(test){
         test.expect(6);
 
-        var actual = grunt.file.read('tmp/renderMultiTemplates/sub1/ourpeople.html');
+        var actual = grunt.file.read('tmp/renderMultiTemplates/sub1/ourpeople/index.html');
         var expected = grunt.file.read('test/expected/renderMultiTemplates/sub1/ourpeople.html');
         test.equal(actual, expected, 'should describe what to expect at /sub1/ourpeople.html');
 
-        actual = grunt.file.read('tmp/renderMultiTemplates/sub1/ourproducts.html');
+        actual = grunt.file.read('tmp/renderMultiTemplates/sub1/ourproducts/index.html');
         expected = grunt.file.read('test/expected/renderMultiTemplates/sub1/ourproducts.html');
         test.equal(actual, expected, 'should describe what to expect at /sub1/ourproducts.html');
 
-        actual = grunt.file.read('tmp/renderMultiTemplates/sub1/ourservice.html');
+        actual = grunt.file.read('tmp/renderMultiTemplates/sub1/ourservice/index.html');
         expected = grunt.file.read('test/expected/renderMultiTemplates/sub1/ourservice.html');
         test.equal(actual, expected, 'should describe what to expect at /sub1/ourservice.html');
 
-        actual = grunt.file.read('tmp/renderMultiTemplates/sub2/ourpeople.html');
+        actual = grunt.file.read('tmp/renderMultiTemplates/sub2/ourpeople/index.html');
         expected = grunt.file.read('test/expected/renderMultiTemplates/sub2/ourpeople.html');
         test.equal(actual, expected, 'should describe what to expect at /sub2/ourpeople.html');
 
-        actual = grunt.file.read('tmp/renderMultiTemplates/sub2/ourproducts.html');
+        actual = grunt.file.read('tmp/renderMultiTemplates/sub2/ourproducts/index.html');
         expected = grunt.file.read('test/expected/renderMultiTemplates/sub2/ourproducts.html');
         test.equal(actual, expected, 'should describe what to expect at /sub2/ourproducts.html');
 
-        actual = grunt.file.read('tmp/renderMultiTemplates/sub2/ourservice.html');
+        actual = grunt.file.read('tmp/renderMultiTemplates/sub2/ourservice/index.html');
         expected = grunt.file.read('test/expected/renderMultiTemplates/sub2/ourservice.html');
         test.equal(actual, expected, 'should describe what to expect at /sub2/ourservice.html');
 
@@ -188,4 +188,21 @@ exports.static_handlebars = {
 
         test.done();
     },
+    renderComplex: function(test){
+        test.expect(3);
+
+        var actual = grunt.file.read('tmp/renderComplex/index.html');
+        var expected = grunt.file.read('test/expected/renderComplex/index.html');
+        test.equal(actual, expected, 'should describe what to expect at (complex) /');
+
+        actual = grunt.file.read('tmp/renderComplex/contact.html');
+        expected = grunt.file.read('test/expected/renderComplex/contact.html');
+        test.equal(actual, expected, 'should describe what to expect at (complex) /contact');
+
+        actual = grunt.file.read('tmp/renderComplex/product/index.html');
+        expected = grunt.file.read('test/expected/renderComplex/product/index.html');
+        test.equal(actual, expected, 'should describe what to expect at (complex) /product');
+
+        test.done();
+    }
 };

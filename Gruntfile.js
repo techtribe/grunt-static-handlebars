@@ -8,8 +8,10 @@
 
 'use strict';
 
-module.exports = function(grunt) {
+//TODO cleanen & afvangen van fouten
+//TODO glob werkt nog goed?
 
+module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     jshint: {
@@ -32,6 +34,11 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     staticHandlebars: {
         options:{
+            pageRoot: 'test/fixtures', //root directory
+            sourceRoot: 'test/assets', //used for JS/CSS files
+            packageDirectory: 'tmp/packages',
+            assetsFolder: '/',
+            ignoreFilesHelper:false,
             partials:'test/fixtures/partials/**/*.hbp',
             helpers:'test/fixtures/helpers/**/*.js'
         },
@@ -95,6 +102,9 @@ module.exports = function(grunt) {
         },
         renderIgnore:{
             files:{'tmp/renderIgnore/*.html':'test/fixtures/ignore/*.html'}
+        },
+        renderComplex:{
+            files:{'tmp/renderComplex/**/*.html':'test/fixtures/complex/**/*.hbt'}
         }
     },
 

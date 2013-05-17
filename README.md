@@ -8,13 +8,13 @@ This plugin requires Grunt `~0.4.1` which uses [Node.js](http://nodejs.org/downl
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
 ```shell
-npm install static-handlebars --save-dev
+npm install grunt-static-handlebars --save-dev
 ```
 
 One the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
 
 ```js
-grunt.loadNpmTasks('static-handlebars');
+grunt.loadNpmTasks('grunt-static-handlebars');
 ```
 
 ## Documentation
@@ -24,7 +24,7 @@ In your project's Gruntfile, add a section named `static_handlebars` to the data
 
 ```js
 grunt.initConfig({
-  static_handlebars: {
+  staticHandlebars: {
     options: {
       // Task-specific options go here.
     },
@@ -53,12 +53,93 @@ Extension: `.js`
 
 A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-helpers.
 
+#### options.pageRoot
+
+Type: `String` or `Array`  
+Default value: `''`  
+
+The file directory to use as base folder for your templates. (will be automated later)
+
+#### options.sourceRoot
+
+Type: `String` or `Array`  
+Default value: `''`  
+
+The directory in which all your assets are. This path will be default relative to the current working directory and be added before the provided assets paths like ```css/base.css``` you will find in your context-files.
+
+#### options.packageDirectory
+
+Type: `String` or `Array`  
+Default value: `''`  
+
+The directory in which all assets are concatenated which you can copy to the correct target folder __OR__ use to minify them before copying.
+
+#### options.assetsFolder
+
+Type: `String`  
+Default value: `'/'`  
+
+The directory in which all assets are provided and referenced by inside the processed html template.
+
+#### options.ignoreFilesHelper
+
+Type: `Boolean`  
+Default value: `false`  
+
+While [Handlebars](http://handlebarsjs.com) is mostly used for .html files this option provides the ability to ignore the ```{{staticHandlebarsFiles}}``` template tag and write your own version if set to ```true```. 
+If kept at ```false``` you can describe in your context-files which kind of assets are needed on that page.
+
+So, define a .html/.hbt file as a Handlebars template and add a (same filename) .json file in the same folder. In that .json file you can describe assets like
+
+```json
+{
+    "extends": [ "base.json" ],
+    "files%add": [
+        "/css/homepage.css",
+        "/js/homepage.js"
+    ],
+    "title":"A new page title.",
+    "page":{
+        "title":"Welcome",
+        "content":"At our new test site."
+    },
+    "footer":"Some contact information about how to get in touch with us."
+}
+```
+
+This means that this Handlebars template: 
+
+* use the base.json as source for the ```files```-list
+* add extra files only for this template with ```files%add```
+* and use extra context like title / page to use in your template as ```{{title}}``` and ```{{page.title}}```
+
+This setup provides flexibility to keep a base list of files and add or ignore files that are not needed on a certain page.
+
+You can also ignore ```extends``` and ```files``` to just render the template with the provided context (json), like:
+
+```json
+{
+    "title":"A new page title.",
+    "page":{
+        "title":"Welcome",
+        "content":"At our new test site."
+    },
+    "footer":"Some contact information about how to get in touch with us."
+}
+```
+
+___Note: if you use this plugin for non-html files you can ignore this option as long as you don't use ```{{staticHandlebarsFiles}}``` in your Handlebars templates.___
+
 #### target
 
 ```js
 grunt.initConfig({
-  static_handlebars: {
+  staticHandlebars: {
     options: {
+    	pageRoot: 'templates', //root directory
+    	sourceRoot: 'assets', //used for JS/CSS files
+    	packageDirectory: 'target/tmp/package', //packaged files directory
+    	
     	partials:'',
     	helpers:''
     },
@@ -116,6 +197,7 @@ See the ```/test``` directory for examples how to use this. Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+0.5.0 - Added "extends" mechanism to limit the file-paths needed in the context-files (normally .json files) which means you have a built-in option to include JS/CSS/?-files in an optimized way inside your ```html  <head>```
 0.4.3 - If no .json file is mentioned, the template context will be defaulted to {}  
 0.4.2 - Fixed the processing of static files without any [Handlebars](htt://handlebarsjs.com)  
 0.4.1 - Added grunt as global variable
@@ -134,3 +216,11 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 * (?) add or ignore target.options.partials/helpers
 * (?) detect duplicate definitions of context &amp; helpers/partials
 * (?) use lowercase to detect wrong definitions of code or not useful
+* Add partials/helpers inside context files (see base.json for example)
+* Ignore {{staticHandlebarsFiles}} helper
+* ! More flexible targetPath paths (parent-directories)
+* ! add helper to file
+* ! use target-directory for targetPath > check destination for that?
+* Add Packageroot as task-options and not only in general options
+* ! Smarter pageRoot/packagesDirectory setup - detect working directory (see subDirectories-function)
+* Detect missing pageRoot and other variables

@@ -124,19 +124,37 @@ module.exports = function(grunt) {
 
     function initOptions(){
         if(files === undefined){
+            var options = grunt.config.get(NAME).options;
             //load all partials
-            files = grunt.file.expand(grunt.config.get(NAME).options.partials);
+            files = grunt.file.expand(options.partials);
             files.forEach(function(file){
                 Handlebars.registerPartial(getBasename(file),grunt.file.read(file));
             });
 
             //load all helpers
-            files = grunt.file.expand(grunt.config.get(NAME).options.helpers);
+            files = grunt.file.expand(options.helpers);
             files.forEach(function(file){
                 //outside tasks-directory
                 var s = require(process.cwd()+'/'+file);
                 Handlebars.registerHelper(getBasename(file),s);
             });
+
+            if(options.assetsFolder === undefined && options.assetsfolder !== undefined){
+                grunt.option('assetsFolder','/');
+            }else if(options.assetsFolder !== undefined && options.assetsfolder === undefined){
+                if(options.assetsFolder){
+                    grunt.option('assetsFolder',options.assetsFolder);
+                }else{
+                    grunt.option('assetsFolder',options.assetsfolder);
+                }
+            }else{
+                grunt.option('assetsFolder','/');
+            }
+
+            if(!options.ignoreFilesHelper || !options.ignorefileshelper || options.ignoreFilesHelper === undefined){
+                grunt.log.debug('Add Handlebars helper ("{{staticHandlebarsFiles}}") for files.');
+                Handlebars.registerHelper('staticHandlebarsFiles', require(__dirname+'/helper/staticHandlebarsFiles.js'));
+            }
         }
     }
 
@@ -390,8 +408,10 @@ module.exports = function(grunt) {
                     }
 
                     //save
+                    grunt.log.debug('Save:',path);
                     grunt.file.write(path,output);
                 }else{
+                    grunt.log.debug('Save:',destinationPath(f.dest,filepath,options.subDirectories));
                     //just a html file, no handlebars
                     grunt.file.write(destinationPath(f.dest,filepath,options.subDirectories),file);
                 }
