@@ -128,7 +128,7 @@ You can also ignore ```extends``` and ```files``` to just render the template wi
 }
 ```
 
-___Note: if you use this plugin for non-html files you can ignore this option as long as you don't use ```{{staticHandlebarsFiles}}``` in your Handlebars templates.___
+_Note: if you use this plugin for non-html files you can ignore this option as long as you don't use ```{{staticHandlebarsFiles}}``` in your Handlebars templates._
 
 #### target
 
@@ -139,8 +139,9 @@ grunt.initConfig({
     	pageRoot: 'templates', //root directory
     	sourceRoot: 'assets', //used for JS/CSS files
     	packageDirectory: 'target/tmp/package', //packaged files directory
-    	
-    	partials:'',
+    	assetsFolder: '/',
+    	ignoreFilesHelper: false,
+	   	partials:'',
     	helpers:''
     },
     target: {
@@ -166,7 +167,7 @@ A string or array value that resembles the files to use as context-input (json).
 
 Type: `Object` or `Array`  
 Default value: `''`  
-Extension: `.hbt` or `.html`
+Extension: `*` whatever you like (```.hbt``` or ```.html```)
 
 A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-templates.
 
@@ -175,7 +176,11 @@ A string or array value that resembles the files to use as [Handlebars](http://h
 ```  
 or  
 ```js
-{'destinationFolder/*.html':'inputFolder/*.hbs'}
+{'destinationFolder/*.html':'inputFolder/*.hbt'}
+```  
+or
+```js
+{'destinationFolder/**/*.html':'inputFolder/**/*.hbt'}
 ```  
 to render all [Handlebars](http://handlebarsjs.com) templates.
 
@@ -197,7 +202,7 @@ See the ```/test``` directory for examples how to use this. Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-0.5.0 - Added "extends" mechanism to limit the file-paths needed in the context-files (normally .json files) which means you have a built-in option to include JS/CSS/?-files in an optimized way inside your ```html  <head>```
+0.5.0 - Added "extends" mechanism to limit the file-paths needed in the context-files (normally .json files) which means you have a built-in option to include JS/CSS/?-files in an optimized way inside your ```html  <head>```  
 0.4.3 - If no .json file is mentioned, the template context will be defaulted to {}  
 0.4.2 - Fixed the processing of static files without any [Handlebars](htt://handlebarsjs.com)  
 0.4.1 - Added grunt as global variable
