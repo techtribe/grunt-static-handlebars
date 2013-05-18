@@ -36,53 +36,47 @@ grunt.initConfig({
 ```
 
 ### Options
+Options can reside in the general definition of the plugin or inside any task-options to overrule or define the options to use with that (sub)task.
 
-#### options.partials
-
+#### partials
 Type: `String` or `Array`  
 Default value: `''`  
-Extension: `.hbp`
+Extension: `*` whatever you like (for example ```.hbt``` or ```.html```)
 
-A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-partials.
+A string or array value that resembles the (type of) files to use as [Handlebars](http://handlebarsjs.com)-partials.
 
-#### options.helpers
-
+#### helpers
 Type: `String` or `Array`  
 Default value: `''`  
 Extension: `.js`
 
 A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-helpers.
 
-#### options.pageRoot
-
+#### pageRoot
 Type: `String` or `Array`  
-Default value: `''`  
+Default value: `.`  
 
 The file directory to use as base folder for your templates. (will be automated later)
 
-#### options.sourceRoot
-
+#### sourceRoot
 Type: `String` or `Array`  
-Default value: `''`  
+Default value: `.`  
 
 The directory in which all your assets are. This path will be default relative to the current working directory and be added before the provided assets paths like ```css/base.css``` you will find in your context-files.
 
-#### options.packageDirectory
-
+#### packageDirectory
 Type: `String` or `Array`  
-Default value: `''`  
+Default value: `.`  
 
 The directory in which all assets are concatenated which you can copy to the correct target folder __OR__ use to minify them before copying.
 
-#### options.assetsFolder
-
+#### assetsFolder
 Type: `String`  
 Default value: `'/'`  
 
 The directory in which all assets are provided and referenced by inside the processed html template.
 
-#### options.ignoreFilesHelper
-
+#### ignoreFilesHelper
 Type: `Boolean`  
 Default value: `false`  
 
@@ -130,7 +124,34 @@ You can also ignore ```extends``` and ```files``` to just render the template wi
 
 _Note: if you use this plugin for non-html files you can ignore this option as long as you don't use ```{{staticHandlebarsFiles}}``` in your Handlebars templates._
 
-#### target
+#### json
+Type: `String` or `Array`  
+Default value: `''`  
+Extension: `.json`
+
+A string or array value that resembles the files to use as context-input (json).
+
+#### files
+Type: `Object` or `Array`  
+Default value: `''`  
+Extension: `*` whatever you like (for example ```.hbt``` or ```.html```)
+
+A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-templates.
+```js
+{'destinationFolder/file.html':'inputFolder/input.hbt'}
+```  
+or  
+```js
+{'destinationFolder/*.html':'inputFolder/*.hbt'}
+```  
+or
+```js
+{'destinationFolder/**/*.html':'inputFolder/**/*.hbt'}
+```  
+to render all [Handlebars](http://handlebarsjs.com) templates.
+
+## Examples
+See the ```/test``` directory for examples how to use this plugin. 
 
 ```js
 grunt.initConfig({
@@ -155,39 +176,7 @@ grunt.initConfig({
 })
 ```
 
-#### target.options.json
-
-Type: `String` or `Array`  
-Default value: `''`  
-Extension: `.json`
-
-A string or array value that resembles the files to use as context-input (json).
-
-#### target.files
-
-Type: `Object` or `Array`  
-Default value: `''`  
-Extension: `*` whatever you like (```.hbt``` or ```.html```)
-
-A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-templates.
-
-```js
-{'destinationFolder/file.html':'inputFolder/input.hbt'}
-```  
-or  
-```js
-{'destinationFolder/*.html':'inputFolder/*.hbt'}
-```  
-or
-```js
-{'destinationFolder/**/*.html':'inputFolder/**/*.hbt'}
-```  
-to render all [Handlebars](http://handlebarsjs.com) templates.
-
-## Examples
-
-See the ```/test``` directory for examples how to use this. Some remarks:
-
+Some remarks:
 * ```.hbt``` are [Handlebars](http://handlebarsjs.com)-templates but can be any extension (.html, .htm, .hbs, etc)
 * ```.hbp``` are [Handlebars](http://handlebarsjs.com)-partials but can be any extension (.html, .htm, .hbs, etc)
 * [Handlebars](http://handlebarsjs.com)-helpers are JS functions and therefore saved as ```.js``` files.
@@ -202,7 +191,7 @@ See the ```/test``` directory for examples how to use this. Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-0.5.0 - Added "extends" mechanism to limit the file-paths needed in the context-files (normally .json files) which means you have a built-in option to include JS/CSS/?-files in an optimized way inside your ```html  <head>```  
+0.5.0 - Added "extends" mechanism to limit the file-paths needed in the context-files (normally .json files) which means you have a built-in option to include JS/CSS/?-files in an optimized way inside your ```<head>```  
 0.4.3 - If no .json file is mentioned, the template context will be defaulted to {}  
 0.4.2 - Fixed the processing of static files without any [Handlebars](htt://handlebarsjs.com)  
 0.4.1 - Added grunt as global variable

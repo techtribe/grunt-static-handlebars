@@ -19,8 +19,6 @@ module.exports = function(grunt) {
     GLOBAL_OBJECT.Handlebars = require('handlebars');
     GLOBAL_OBJECT._ = grunt.util._;
     GLOBAL_OBJECT.grunt = grunt;
-    //local
-    var handlebars = GLOBAL_OBJECT.Handlebars;
 
     //variables
     var NAME = 'staticHandlebars';
@@ -34,6 +32,7 @@ module.exports = function(grunt) {
 
     grunt.file.defaultEncoding = 'utf8';
 
+    //functions
     function getBasename(filename){
         var s = filename.split('/');
         var output = '';
@@ -125,6 +124,7 @@ module.exports = function(grunt) {
     function initOptions(){
         if(files === undefined){
             var options = grunt.config.get(NAME).options;
+
             //load all partials
             files = grunt.file.expand(options.partials);
             files.forEach(function(file){
@@ -139,19 +139,14 @@ module.exports = function(grunt) {
                 Handlebars.registerHelper(getBasename(file),s);
             });
 
-            if(options.assetsFolder === undefined && options.assetsfolder !== undefined){
+            //assets folder
+            if(options.assetsFolder === undefined){
                 grunt.option('assetsFolder','/');
-            }else if(options.assetsFolder !== undefined && options.assetsfolder === undefined){
-                if(options.assetsFolder){
-                    grunt.option('assetsFolder',options.assetsFolder);
-                }else{
-                    grunt.option('assetsFolder',options.assetsfolder);
-                }
             }else{
-                grunt.option('assetsFolder','/');
+                grunt.option('assetsFolder',options.assetsFolder);
             }
 
-            if(!options.ignoreFilesHelper || !options.ignorefileshelper || options.ignoreFilesHelper === undefined){
+            if(!options.ignoreFilesHelper || options.ignoreFilesHelper === undefined){
                 grunt.log.debug('Add Handlebars helper ("{{staticHandlebarsFiles}}") for files.');
                 Handlebars.registerHelper('staticHandlebarsFiles', require(__dirname+'/helper/staticHandlebarsFiles.js'));
             }
@@ -329,10 +324,18 @@ module.exports = function(grunt) {
         // Merge task-specific and/or target-specific options with these defaults.
         var options = this.options({
             pageRoot: '.',
+            sourceRoot: '.',
             skipRendering:false,
             useSameFilename:true,
-            subDirectories:[]
+            subDirectories:[],
+            assetsFolder: '/',
+            ignoreFilesHelper:false,
+            packageDirectory:'.',
+            partials: '',
+            helpers: '',
+            json:''
         });
+
         grunt.log.debug('Options:', options);
 
         //check if template-data has the same basename
