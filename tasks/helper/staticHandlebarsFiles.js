@@ -2,6 +2,7 @@ module.exports = function(){
     if(!this.files){
         return '';
     }
+
     var output = '';
     _.each(this.files,function(itemSpec){
         if (typeof itemSpec === 'string') {
@@ -25,9 +26,12 @@ module.exports = function(){
             output += '    <!--[if ' + comparator + ' IE ' + version + ']>\n';
             suffix =  '    <![endif]-->\n'
         }
-        var folder = grunt.option('assetsFolder');
+        var folder = grunt.option('assetsPath');
         if(folder.charAt(folder.length-1) === '/'){
             folder = folder.substr(0,folder.length-1);
+        }
+        if(item.charAt(0) === '/'){
+            item = item.substr(1);
         }
         switch(tp){
             case '*.js':

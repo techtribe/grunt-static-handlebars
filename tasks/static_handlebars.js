@@ -54,7 +54,9 @@ module.exports = function(grunt) {
         return output;
     }
 
-    function sourceDirectory(data,task){
+    function baseDirectory(data,task,isObject){
+        if(isObject === undefined) isObject = true;
+        //retrieve base directory to use as a root folder with deeper/longer file paths
         if(data){
             if(!grunt.util._.isArray(data)){
                 var s = [data];
@@ -66,7 +68,12 @@ module.exports = function(grunt) {
                 if(values.length > 1){
                     grunt.fail.fatal(new Error('Too many "files"-values given at task "'+task+'" : '+require('util').inspect(values).toString()));
                 }
-                var directory = values[0];
+                var directory;
+                if(isObject){
+                    directory = values[0];
+                }else{
+                    directory = item;
+                }
                 if(directory.indexOf('**') !== -1){
                     //fill subdirectories
                     var s = directory.split('**');
@@ -74,82 +81,74 @@ module.exports = function(grunt) {
                     p.push(s[0]);
                 }else{
                     //no subdirectories
-                }
-                //check keys/values if they match in depth (**/* cannot match *.hbt in input/output folders)
-                grunt.util._.forIn(item,function(value,key){
-                    if(value.indexOf('**') !== -1){
-                        if(key.indexOf('**') === -1){
-                            grunt.fail.fatal('Destination ('+key+') needs to have the same depth as the input file ('+value+')');
-                        }
-                    }else if(key.indexOf('**') !== -1){
-                        grunt.fail.fatal('Destination ('+key+') needs to have the same depth as the input file ('+value+')');
+                    if(directory.indexOf('*') === -1){
+                        p.push(directory.substr(0,directory.lastIndexOf('/')+1));
+                    }else{
+                        p.push(directory.split('*')[0]);
                     }
-                });
+                }
+                if(isObject){
+                    //check keys/values if they match in depth (**/* cannot match *.hbt in input/output folders)
+                    grunt.util._.forIn(item,function(value,key){
+                        if(value.indexOf('**') !== -1){
+                            if(key.indexOf('**') === -1){
+                                grunt.fail.fatal('Destination ('+key+') needs to have the same depth as the input file ('+value+') at task "',task,'"');
+                            }
+                        }else if(key.indexOf('**') !== -1){
+                            grunt.fail.fatal('Destination ('+key+') needs to have the same depth as the input file ('+value+') at task "',task,'"');
+                        }
+                    });
+                }else{
+                    //just a string, fine.
+                }
             });
             data = null;
-            return grunt.util._.uniq(p);
+
+            var out = grunt.util._.uniq(p)[0];
+            if(out.charAt(out.length-1) === '/'){
+                out = out.substr(0,out.length-1);
+            }
+            return out;
         }else{
             data = null;
             return [];
         }
     }
 
-    function replaceExtension(filename,extension){
+    function destinationPath(destination,filepath,fileDirectory){
+        //match fileDirectory to destination path
+        var root = baseDirectory([destination],'destinationPath',false);
+        var source = filepath.replace(fileDirectory,'');
+
+        //replace extension
+        var filename = root+source;
+        var extension = destination.split('.').pop();
         return filename.substr(0,filename.lastIndexOf('.'))+'.'+extension;
     }
 
-    function destinationPath(destination,filepath,subDirectories){
-        //find subdirectory
-        var path, destinationBasePath;
-        if(subDirectories.length === 0){
-            //same path, no deep folders
-            if(destination.indexOf('*') === -1){
-                path = destination;
-            }else{
-                destinationBasePath = destination.split('*').shift();
-                path = destinationBasePath + filepath.split('/').pop();
-            }
-        }else{
-            //subdirectories found, so determine how deep a file needs to be brought
-            var found = grunt.util._.find(subDirectories,function(item){
-                return (filepath.indexOf(item) !== -1);
-            });
-            destinationBasePath = destination.split('*').shift();
-//          grunt.log.debug('Destination path:', destination, filepath, subDirectories, found, s);
-            path = destinationBasePath + filepath.replace(found,'');
-        }
-        return replaceExtension(path, destination.split('.').pop());
-    }
-
-    function initOptions(){
+    function initOptions(options){
         if(files === undefined){
             var options = grunt.config.get(NAME).options;
 
             //load all partials
-            files = grunt.file.expand(options.partials);
-            files.forEach(function(file){
-                Handlebars.registerPartial(getBasename(file),grunt.file.read(file));
-            });
+            if(!grunt.util._.isEmpty(options.partials)){
+                files = grunt.file.expand(options.partials);
+                files.forEach(function(file){
+                    Handlebars.registerPartial(getBasename(file),grunt.file.read(file));
+                });
+            }
 
             //load all helpers
-            files = grunt.file.expand(options.helpers);
-            files.forEach(function(file){
-                //outside tasks-directory
-                var s = require(process.cwd()+'/'+file);
-                Handlebars.registerHelper(getBasename(file),s);
-            });
-
-            //assets folder
-            if(options.assetsFolder === undefined){
-                grunt.option('assetsFolder','/');
-            }else{
-                grunt.option('assetsFolder',options.assetsFolder);
+            if(!grunt.util._.isEmpty(options.helpers)){
+                files = grunt.file.expand(options.helpers);
+                files.forEach(function(file){
+                    //outside tasks-directory
+                    var s = require(process.cwd()+'/'+file);
+                    Handlebars.registerHelper(getBasename(file),s);
+                });
             }
 
-            if(!options.ignoreFilesHelper || options.ignoreFilesHelper === undefined){
-                grunt.log.debug('Add Handlebars helper ("{{staticHandlebarsFiles}}") for files.');
-                Handlebars.registerHelper('staticHandlebarsFiles', require(__dirname+'/helper/staticHandlebarsFiles.js'));
-            }
+
         }
     }
 
@@ -228,9 +227,9 @@ module.exports = function(grunt) {
             var extension = parts[0];
             var qualifier = parts.length > 1 ? '-' + parts[1] : '';
 //          grunt.log.debug('Package type:', packageType, parts, extension, qualifier);
-            var packageGroupDirectory = options.packageDirectory + '/' + extension;
+            var packageGroupDirectory = options.assets.packagedFilesPath + '/' + extension;
             var suffix = qualifier + '.' + extension;
-            generatePackageGroup(packages[packageType], options.sourceRoot, packageGroupDirectory, suffix, '\n\n');
+            generatePackageGroup(packages[packageType], options.assets.sourcesPath, packageGroupDirectory, suffix, '\n\n');
         }
     }
 
@@ -282,13 +281,51 @@ module.exports = function(grunt) {
 //      grunt.log.debug("Extended:", target);
     }
 
+    function initiateAssetsObject(options){
+        if(options.assets === undefined || options.assets === null){
+            options.assets = {};
+            grunt.fail.warn('Do not override assets with an incompatible "options.assets" property. Use the documentation!');
+        }
+
+        if(options.assets.templatesPath === undefined || options.assets.templatesPath === ''){
+            options.assets.templatesPath = '.';
+        }
+
+        if(options.assets.sourcesPath === undefined || options.assets.sourcesPath === ''){
+            options.assets.sourcesPath = '.';
+        }
+
+        if(options.assets.assetsPath === undefined || options.assets.assetsPath === ''){
+            options.assets.assetsPath = '.';
+            grunt.option('assetsPath','/');
+        }else{
+            grunt.option('assetsPath',options.assets.assetsPath);
+        }
+
+        if(options.assets.packagedFilesPath === undefined || options.assets.packagedFilesPath === ''){
+            options.assets.packagedFilesPath = '.';
+        }
+
+        if(options.assets.concatenate === undefined || options.assets.concatenate === ''){
+            options.assets.concatenate = false;
+        }
+
+        if(options.assets.ignoreHelper === undefined || options.assets.ignoreHelper === ''){
+            options.assets.ignoreHelper = false;
+        }
+
+        if(options.assets.ignoreHelper === false){
+            grunt.log.debug('Add Handlebars helper ("{{staticHandlebarsFiles}}") for files.');
+            Handlebars.registerHelper('staticHandlebarsFiles', require(__dirname+'/helper/staticHandlebarsFiles.js'));
+        }
+    }
+
     function getContext(basePath, jsonFile, prefix) {
         var context = { targetPath: null };
         prefix = prefix || '';
         if (grunt.file.exists(jsonFile)){
             var childContext = { extends: [] };
             try {
-                // TODO JSON.parse works, but grunt.file.readJSON not
                 // if file not exist, grunt will pop up an error
                 childContext = JSON.parse(grunt.file.read(jsonFile, { encoding: 'utf8' }));
             }catch (e) {
@@ -319,41 +356,50 @@ module.exports = function(grunt) {
 
     //register task
     grunt.registerMultiTask(NAME, 'Create static html from handlebars-files.', function() {
-        initOptions();
-
         // Merge task-specific and/or target-specific options with these defaults.
         var options = this.options({
-            pageRoot: '.',
-            sourceRoot: '.',
-            skipRendering:false,
             useSameFilename:true,
-            subDirectories:[],
-            assetsFolder: '/',
-            ignoreFilesHelper:false,
-            packageDirectory:'.',
             partials: '',
             helpers: '',
-            json:''
+            json:'',
+            assets:{
+                templatesPath:'.',
+                sourcesPath:'.',
+                assetsPath:'.',
+                packagedFilesPath:'.',
+                concatenate:false,
+                ignoreHelper:false
+            }
         });
+
+        //======= DEFAULT VALUES =======
+        //check if assets is not complete
+        initiateAssetsObject(options);
+
+        //define concatenate property to use with/without helper
+        if(options.assets.packagedFilesPath !== '.' && options.assets.packagedFilesPath !== undefined){
+            grunt.option('concatenate',true);
+        }else{
+            grunt.option('concatenate',false);
+        }
 
         grunt.log.debug('Options:', options);
 
-        //check if template-data has the same basename
+        //check if template-context (data) has the same basename
         if(options.json){
             options.useSameFilename = false;
         }
-
-        //check if helpers or partials are overruled
-        options.disableHelpers = grunt.util._.isEmpty(options.helpers);
-        options.disablePartials = grunt.util._.isEmpty(options.partials);
 
         if(typeof options.json === "string"){
             options.json = [options.json];
         }
 
-        //TODO ALL references to itself need to be switched = memory leak
         //retrieve base folders to copy correctly into destination folders
-        options.subDirectories = sourceDirectory(this.data.files,this.target);
+        options.assets.templatesPath = baseDirectory(this.data.files,this.target);
+        //======= DEFAULT VALUES =======
+
+        //only once
+        initOptions(options);
 
         grunt.log.write('Rendering "'+this.target+'" ...\n');
 
@@ -379,10 +425,23 @@ module.exports = function(grunt) {
                         //another json file provided
                         jsonFile = options.json[i];
                     }
-                    var context = getContext(options.pageRoot, jsonFile);
+
+                    var context = getContext(options.assets.templatesPath, jsonFile);
                     grunt.log.debug('Context:', context);
 
-                    replaceFiles(context, packages);
+                    //adjust filenames due to concatenation
+                    if(grunt.option('concatenate') === true){
+                        replaceFiles(context, packages);
+                    }else{
+                        //add to packages
+                        if(!packages.files){
+                            packages.files = [];
+                        }
+                        if(context.files){
+                            var temp = packages.files.concat(context.files);
+                            packages.files = temp.slice(0,temp.length);
+                        }
+                    }
 
                     try{
                         //ignore errors with used helpers/partials
@@ -398,12 +457,14 @@ module.exports = function(grunt) {
 
                     //determine output path
                     var path;
-                    if (context.targetPath) {
-                        path = destinationPath(f.dest,context.targetPath,options.subDirectories);
+                    if (context.targetPath != undefined) {
+                        //originate from default folder with new filepath
+                        path = destinationPath(f.dest,options.assets.templatesPath+'/'+context.targetPath,options.assets.templatesPath);
                         grunt.log.debug("Custom path:", path);
                     } else {
-                        path = destinationPath(f.dest,filepath,options.subDirectories);
+                        path = destinationPath(f.dest,filepath,options.assets.templatesPath);
                         var baseName = path.split('/').pop();
+                        //to make a static file, you will need to make "folder/index.html" to enable "folder" as a link
                         if (baseName != 'index.html') {
                             path = path.replace(/[/]*([.][^/]*)?$/, '/index.html');
                         }
@@ -414,9 +475,9 @@ module.exports = function(grunt) {
                     grunt.log.debug('Save:',path);
                     grunt.file.write(path,output);
                 }else{
-                    grunt.log.debug('Save:',destinationPath(f.dest,filepath,options.subDirectories));
+                    grunt.log.debug('Save:',destinationPath(f.dest,filepath,options.assets.templatesPath));
                     //just a html file, no handlebars
-                    grunt.file.write(destinationPath(f.dest,filepath,options.subDirectories),file);
+                    grunt.file.write(destinationPath(f.dest,filepath,options.assets.templatesPath),file);
                 }
             });
             i++;
@@ -425,7 +486,15 @@ module.exports = function(grunt) {
         //succeeded
         grunt.log.ok();
 
-        generatePackages(packages, options);
+        if(grunt.option('concatenate') === true){
+            generatePackages(packages, options);
+        }else{
+            //use grunt-contrib-copy is more obvious
+            if(options.assets.sourcesPath !== '.'){
+                grunt.log.subhead('COPY WARNING!');
+                grunt.log.error('Copy your assets from "'+options.assets.sourcesPath+'" to the correct folder you\'d like to use. (grunt-contrib-copy)');
+            }
+        }
 
         if(errors.length > 0){
             grunt.log.error('\n##### ERRORS #####');

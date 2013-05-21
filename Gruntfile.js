@@ -1,5 +1,5 @@
 /*
- * static-handlebars
+ * grunt-static-handlebars
  * https://github.com/techtribe/grunt-static-handlebars
  *
  * Copyright (c) 2013 Joey van Dijk
@@ -8,8 +8,7 @@
 
 'use strict';
 
-//TODO cleanen & afvangen van fouten
-//TODO glob werkt nog goed?
+//TODO ALL references to itself need to be switched = memory leak
 
 module.exports = function(grunt) {
   // Project configuration.
@@ -34,11 +33,6 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     staticHandlebars: {
         options:{
-            pageRoot: 'test/fixtures', //root directory
-            sourceRoot: 'test/assets', //used for JS/CSS files
-            packageDirectory: 'tmp/packages',
-            assetsFolder: '/',
-            ignoreFilesHelper:false,
             partials:'test/fixtures/partials/**/*.hbp',
             helpers:'test/fixtures/helpers/**/*.js'
         },
@@ -104,7 +98,23 @@ module.exports = function(grunt) {
             files:{'tmp/renderIgnore/*.html':'test/fixtures/ignore/*.html'}
         },
         renderComplex:{
+            options:{
+                assets:{
+                    sourcesPath: 'test/assets', //used for JS/CSS files
+                    packagedFilesPath: 'tmp/packages',
+                    assetsPath: '/'
+                }
+            },
             files:{'tmp/renderComplex/**/*.html':'test/fixtures/complex/**/*.hbt'}
+        },
+        renderComplexWithoutPackages:{
+            options:{
+                assets:{
+                    sourcesPath: 'test/assets', //used for JS/CSS files but now skip concatenating files
+                    assetsPath: '/'
+                }
+            },
+            files:{'tmp/renderComplexWithoutPackages/**/*.html':'test/fixtures/complex/**/*.hbt'}
         }
     },
 

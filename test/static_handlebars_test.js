@@ -204,5 +204,22 @@ exports.static_handlebars = {
         test.equal(actual, expected, 'should describe what to expect at (complex) /product');
 
         test.done();
+    },
+    renderComplexWithoutPackages: function(test){
+        test.expect(3);
+
+        var actual = grunt.file.read('tmp/renderComplexWithoutPackages/index.html');
+        var expected = grunt.file.read('test/expected/renderComplexWithoutPackages/index.html');
+        test.equal(actual, expected, 'should describe what to expect at (complex (without packages)) /');
+
+        actual = grunt.file.read('tmp/renderComplexWithoutPackages/contact.html');
+        expected = grunt.file.read('test/expected/renderComplexWithoutPackages/contact.html');
+        test.equal(actual, expected, 'should describe what to expect at (complex (without packages)) /contact');
+
+        actual = grunt.file.read('tmp/renderComplexWithoutPackages/product/index.html');
+        expected = grunt.file.read('test/expected/renderComplexWithoutPackages/product/index.html');
+        test.equal(actual, expected, 'should describe what to expect at (complex (without packages)) /product');
+
+        test.done();
     }
 };
