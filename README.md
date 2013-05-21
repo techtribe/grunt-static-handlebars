@@ -67,11 +67,11 @@ _Note: if you use this plugin for non-html files you can ignore this option as l
 
 ```js
 {
-	templatesPath:'.',
+	templatesPath:'.',//optional
 	sourcesPath:'.',
-	assetsPath:'.',
-	packagedFilesPath:'.',
-	ignoreHelper:false
+	assetsPath:'/',
+	packagedFilesPath:'.', //optional
+	ignoreHelper:false //optional
 }
 ```
 
@@ -113,12 +113,12 @@ Type: `String`
 Default value: `/`  
 Define the path which is used inside the processed ```.html``` files (like ```/js/base.js```).
 
-##### assets.packagedFilesPath
+##### assets.packagedFilesPath (optional)
 Type: `String`
 Default value: `.`  
 Define the path where all concatenated files will be put. These files are all combinations of (separate) ```js``` or ```css``` files. You can choose to put them in an alternate folder to minify (```grunt-contrib-uglify``` or ```grunt-contrib-cssmin```) or put them in the production folder.
 
-##### assets.ignoreHelper
+##### assets.ignoreHelper (optional)
 Type: `Boolean`
 Default value: `false`  
 If you would like to overwrite the use of ```{{staticHandlebarsFiles}}``` inside your templates, reset to true and register your own helper with the ```staticHandlebarsFiles``` name.
@@ -164,7 +164,7 @@ grunt.initConfig({
     	options:{
     		json:''
     	},
-		files:{'tmp/simple/**/*.html':'test/fixtures/homepage/**/*.hbt'}
+		files:{'tmp/simple/*.html':'test/fixtures/homepage/*.hbt'}
     },
     complexTarget: {
 	    options:{
