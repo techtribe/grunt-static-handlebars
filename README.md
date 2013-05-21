@@ -80,6 +80,7 @@ where in ```.json``` files you can add
 ```json
 {
     "extends": [ "base.json" ],
+    "targetPath" : "contact.html",
     "files%add": [
         "/css/homepage.css",
         "/js/homepage.js"
@@ -97,6 +98,7 @@ to use as input for the processing of files. This means that this Handlebars tem
 * use ```base.json``` as source for the ```files```-list
 * use extra files only for this template with ```files%add```
 * use extra context like title / page to use in your template as ```{{title}}``` and ```{{page.title}}```
+* use ```targetPath``` to adjust the name of the file being saved relative to the working directory.
 
 ##### assets.templatePath (optional)
 Type: `String`
@@ -216,3 +218,4 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 * ! More flexible targetPath paths (parent-directories)
 * ! use target-directory for targetPath > check destination for that?
 * Other filenames than index.html possible (export already done)
+* Provide single json/context to all files inside Gruntfile.js
