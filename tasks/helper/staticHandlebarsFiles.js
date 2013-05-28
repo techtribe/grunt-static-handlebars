@@ -48,5 +48,5 @@ module.exports = function(){
     });
     //remove last \n
     output = output.substr(0,output.length-1);
-    return new Handlebars.SafeString(output);
+    return new this.handlebarsInstance.SafeString(output);
 }
