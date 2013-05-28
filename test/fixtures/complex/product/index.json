@@ -1,0 +1,5 @@
+{
+    "extends": "base.json",
+    "title": "A nice contact page",
+    "footer":"Some nice product page with information about how cool this product is!<br />Some other links about this product or how to <a href=\"#\">order</a> this."
+}

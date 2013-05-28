@@ -1,0 +1,17 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>{{title}}</title>
+    {{staticHandlebarsFiles}}
+</head>
+<body>
+    <header>{{title}}</header>
+    {{> nav}}
+    {{! Some content which can be anything can be added below but this will not show up in the generated html }}
+
+    {{! Text below can be just static html which is not provided by the context file (json) }}
+    <div>Some other information how to contact us.</div>
+    <footer>{{footer}}</footer>
+</body>
+</html>

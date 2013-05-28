@@ -1,5 +1,5 @@
 /*
- * static-handlebars
+ * grunt-static-handlebars
  * https://github.com/techtribe/grunt-static-handlebars
  *
  * Copyright (c) 2013 Joey van Dijk
@@ -8,8 +8,9 @@
 
 'use strict';
 
-module.exports = function(grunt) {
+//TODO ALL references to itself need to be switched = memory leak
 
+module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     jshint: {
@@ -92,6 +93,28 @@ module.exports = function(grunt) {
         },
         renderInclude:{
             files:{'tmp/renderInclude/*.html':'test/fixtures/campaign/*.hbt'}
+        },
+        renderIgnore:{
+            files:{'tmp/renderIgnore/*.html':'test/fixtures/ignore/*.html'}
+        },
+        renderComplex:{
+            options:{
+                assets:{
+                    sourcesPath: 'test/assets', //used for JS/CSS files
+                    packagedFilesPath: 'tmp/packages',
+                    assetsPath: '/'
+                }
+            },
+            files:{'tmp/renderComplex/**/*.html':'test/fixtures/complex/**/*.hbt'}
+        },
+        renderComplexWithoutPackages:{
+            options:{
+                assets:{
+                    sourcesPath: 'test/assets', //used for JS/CSS files but now skip concatenating files
+                    assetsPath: '/'
+                }
+            },
+            files:{'tmp/renderComplexWithoutPackages/**/*.html':'test/fixtures/complex/**/*.hbt'}
         }
     },
 

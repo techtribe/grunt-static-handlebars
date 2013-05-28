@@ -1,0 +1,1 @@
+console.log('This is the base script you can use on every (if you wish) page.');

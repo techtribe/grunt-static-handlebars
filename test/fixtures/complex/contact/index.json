@@ -1,0 +1,6 @@
+{
+    "extends": [ "base.json" ],
+    "targetPath": "contact.html",
+    "title": "A nice contact page",
+    "footer":"Some contact information about how to get in touch with us."
+}

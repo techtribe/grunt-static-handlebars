@@ -1,0 +1,23 @@
+{
+    "files": [
+        "css/_reset.css",
+        "css/fonts.css",
+        "css/base.css",
+        "css/links.css",
+        {
+            "path": "js/ie9shiv.js",
+            "qualifier": "IE-lt-9",
+            "ieVersion": "9"
+        },
+        "js/base.js",
+        "favicon.ico"
+    ],
+    "partials": [
+        "contentBlock",
+        "nav"
+    ],
+    "helpers": [
+        "include",
+        "renderContent"
+    ]
+}
