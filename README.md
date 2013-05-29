@@ -200,8 +200,8 @@ Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-0.7.1 - Cleanup of documentation + more generic approach to partials/helpers definition
-0.7.0 - Rewrote plugin to support more advanced usage of partials/helpers per page.
+0.7.1 - Cleanup of documentation + more generic approach to partials/helpers definition  
+0.7.0 - Rewrote plugin to support more advanced usage of partials/helpers per page.  
 0.6.0 - Rewrote plugin to enable "extends" mechanism as an option (not as default) + added examples + adjusted Gruntfile.js options definition + renamed options + fixed empty variables  
 0.5.0 - Added "extends" mechanism to limit the file-paths needed in the context-files (normally .json files) which means you have a built-in option to include JS/CSS/?-files in an optimized way inside your ```<head>```  
 0.4.3 - If no .json file is mentioned, the template context will be defaulted to {}  
