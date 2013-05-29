@@ -337,7 +337,7 @@ module.exports = function(grunt) {
 
         if(options.assets.ignoreHelper === false){
             grunt.log.debug('Add Handlebars helper ("{{staticHandlebarsFiles}}") for files.');
-            Handlebars.registerHelper('staticHandlebarsFiles', require(process.cwd()+'/tasks/helper/staticHandlebarsFiles.js'));
+            Handlebars.registerHelper('staticHandlebarsFiles', require(__dirname+'/helper/staticHandlebarsFiles.js'));
         }
     }
 
@@ -388,7 +388,7 @@ module.exports = function(grunt) {
                     //compile
                     context.handlebarsInstance = Handlebars.create();
                     var filesHelperName = 'staticHandlebarsFiles';
-                    var fileHelperPath = process.cwd() + '/tasks/helper/' + filesHelperName;
+                    var fileHelperPath = __dirname + '/helper/' + filesHelperName;
                     var fileHelper = require(fileHelperPath);
                     context.handlebarsInstance.registerHelper(filesHelperName, fileHelper);
 
