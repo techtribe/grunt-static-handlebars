@@ -1,6 +1,6 @@
 // context.js
 //
-// Gets a context for a page that is defined by a Handlbars template.
+// Gets a context for a page that is defined by a Handlebars template.
 
 function extend(target, source) {
     for (var key in source) {

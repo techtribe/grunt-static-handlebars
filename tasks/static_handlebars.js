@@ -130,34 +130,6 @@ module.exports = function(grunt) {
         return filename.substr(0,filename.lastIndexOf('.'))+'.'+extension;
     }
 
-    /*
-     function initOptions(options){
-     if(files === undefined){
-     var options = grunt.config.get(NAME).options;
-
-     //load all partials
-     if(!grunt.util._.isEmpty(options.partials)){
-     files = grunt.file.expand(options.partials);
-     files.forEach(function(file){
-     Handlebars.registerPartial(getBasename(file),grunt.file.read(file));
-     });
-     }
-
-     //load all helpers
-     if(!grunt.util._.isEmpty(options.helpers)){
-     files = grunt.file.expand(options.helpers);
-     files.forEach(function(file){
-     //outside tasks-directory
-     var s = require(process.cwd()+'/'+file);
-     Handlebars.registerHelper(getBasename(file),s);
-     });
-     }
-
-
-     }
-     }
-     */
-
     function requestPackage(files, otherFiles, packageType, packages) {
         var parts = packageType.split(' ');
         var extension = parts[0];
@@ -334,6 +306,27 @@ module.exports = function(grunt) {
             options.assets.packagedFilesPath = '.';
         }
 
+        if(options.assets.partialPath === undefined || options.assets.partialPath === ''){
+            options.assets.partialPath = options.assets.templatesPath + '/../partials/';
+            options.assets.partialPathExtension = '.html';
+        }else{
+            options.assets.partialPathExtension = options.assets.partialPath.substr(options.assets.partialPath.lastIndexOf('.'));
+            if(options.assets.partialPath.indexOf('*') !== -1){
+                options.assets.partialPath = options.assets.partialPath.substr(0,options.assets.partialPath.indexOf('*'));
+            }
+        }
+        if(options.assets.partialPath.charAt(options.assets.partialPath.length-1) !== '/'){
+            options.assets.partialPath += '/';
+        }
+
+        if(options.assets.helperPath === undefined || options.assets.helperPath === ''){
+            options.assets.helperPath = options.assets.templatesPath + '/../helpers/';
+        }
+        if(options.assets.helperPath.charAt(options.assets.helperPath.length-1) !== '/'){
+            options.assets.helperPath += '/';
+        }
+        options.assets.helperPathExtension = '.js';
+
         if(options.assets.concatenate === undefined || options.assets.concatenate === ''){
             options.assets.concatenate = false;
         }
@@ -344,13 +337,13 @@ module.exports = function(grunt) {
 
         if(options.assets.ignoreHelper === false){
             grunt.log.debug('Add Handlebars helper ("{{staticHandlebarsFiles}}") for files.');
-            Handlebars.registerHelper('staticHandlebarsFiles', require(__dirname+'/helper/staticHandlebarsFiles.js'));
+            Handlebars.registerHelper('staticHandlebarsFiles', require(process.cwd()+'/tasks/helper/staticHandlebarsFiles.js'));
         }
     }
 
     var getContext = require(__dirname+'/lib/context.js');
 
-    function renderPage(filePath, f, applicationContext) {
+    function renderPage(filePath, f, applicationContext, no) {
         var packages = applicationContext.packages;
         var errors = applicationContext.errors;
         var options = applicationContext.options;
@@ -367,7 +360,7 @@ module.exports = function(grunt) {
                 jsonFile = filePath.substr(0,filePath.lastIndexOf('.')) + '.json';
             }else{
                 //another json file provided
-                jsonFile = options.json[i];
+                jsonFile = options.json[no];
             }
 
             var trace = { extends: [] };
@@ -395,7 +388,7 @@ module.exports = function(grunt) {
                     //compile
                     context.handlebarsInstance = Handlebars.create();
                     var filesHelperName = 'staticHandlebarsFiles';
-                    var fileHelperPath = process.cwd() + '/node_modules/grunt-static-handlebars/tasks/helper/' + filesHelperName;
+                    var fileHelperPath = process.cwd() + '/tasks/helper/' + filesHelperName;
                     var fileHelper = require(fileHelperPath);
                     context.handlebarsInstance.registerHelper(filesHelperName, fileHelper);
 
@@ -405,7 +398,7 @@ module.exports = function(grunt) {
                         while (ip < ipl) {
                             var partialPath = context.partials[ip];
                             var partialName = partialPath.replace(/^[.*][/]/, '');
-                            var partial = getResourceText(options.assets.templatesPath + '/../partials/' + partialPath + '.html');
+                            var partial = getResourceText(options.assets.partialPath + partialPath + options.assets.partialPathExtension);
                             context.handlebarsInstance.registerPartial(partialName, partial);
                             ip++;
                         }
@@ -416,9 +409,10 @@ module.exports = function(grunt) {
                         var ihl = context.helpers.length;
                         while (ih < ihl) {
                             var helperPath = context.helpers[ih];
-                            helperPath = process.cwd() + '/' + options.assets.templatesPath + '/../helpers/' + helperPath;
+                            helperPath = process.cwd() + '/' + options.assets.helperPath + helperPath;
 //                          logDebug('Helper path:', helperPath);
                             var helperName = helperPath.split('/').pop();
+                            helperPath += options.assets.helperPathExtension;
 //                          logDebug('Helper name:', helperName);
                             var helper = require(helperPath);
 //                          logDebug('Helper: [', helperName, ']: ', helper);
@@ -426,7 +420,6 @@ module.exports = function(grunt) {
                             ih++;
                         }
                     }
-
                     var template = context.handlebarsInstance.compile(file);
                     output = template(context);
                 }
@@ -515,10 +508,6 @@ module.exports = function(grunt) {
         //retrieve base folders to copy correctly into destination folders
         options.assets.templatesPath = baseDirectory(this.data.files,this.target);
         //======= DEFAULT VALUES =======
-        /*
-         //only once
-         initOptions(options);
-         */
         grunt.log.write('Rendering "'+this.target+'" ...\n');
 
         // Iterate over all specified file groups.
@@ -527,7 +516,7 @@ module.exports = function(grunt) {
             this.files.forEach(function(f) {
                 //loop through all files to render
                 f.src.filter(function(filepath) {
-                    renderPage(filepath, f, applicationContext);
+                    renderPage(filepath, f, applicationContext, i);
                 });
                 i++;
             });

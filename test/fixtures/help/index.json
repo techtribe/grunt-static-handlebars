@@ -1,4 +1,7 @@
 {
+    "helpers":[
+        "renderContent"
+    ],
     "title":"A new page title.",
     "content":"Some content but not complete.",
     "footer":"Some contact information about how to get in touch with us."

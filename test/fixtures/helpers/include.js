@@ -12,10 +12,10 @@ module.exports = function(partial){
         else done = true
     }
 
-    partial = Handlebars.partials[partial];
+    partial = this.handlebarsInstance.partials[partial];
     if (!partial) return '';
 
     var context = _.extend(this, opts.hash);
-    var template = Handlebars.compile(partial);
-    return new Handlebars.SafeString( template(context) );
+    var template = this.handlebarsInstance.compile(partial);
+    return new this.handlebarsInstance.SafeString( template(context) );
 }

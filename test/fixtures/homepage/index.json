@@ -1,4 +1,7 @@
 {
+    "partials": [
+        "nav"
+    ],
     "title":"A new page title.",
     "page":{
         "title":"Welcome",

@@ -1,9 +1,5 @@
 {
     "extends": [ "base.json" ],
-    "files%add": [
-        "/css/homepage.css",
-        "/js/homepage.js"
-    ],
     "title":"A new page title.",
     "page":{
         "title":"Welcome",

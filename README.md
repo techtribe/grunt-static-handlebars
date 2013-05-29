@@ -42,20 +42,6 @@ grunt.initConfig({
 ### Options
 Options can reside in the general definition of this plugin or inside any task-options to overrule or define the options to use with that (sub)task.
 
-#### partials
-Type: `String` or `Array`  
-Default value: `''`  
-Extension: `*` whatever you like (for example ```.hbt``` or ```.html```)
-
-A string or array value that resembles the (type of) files to use as [Handlebars](http://handlebarsjs.com)-partials.
-
-#### helpers
-Type: `String` or `Array`  
-Default value: `''`  
-Extension: `.js`
-
-A string or array value that resembles the files to use as [Handlebars](http://handlebarsjs.com)-helpers.
-
 #### assets
 Type: `Object`
 
@@ -71,7 +57,9 @@ _Note: if you use this plugin for non-html files you can ignore this option as l
 	sourcesPath:'.',
 	assetsPath:'/',
 	packagedFilesPath:'.', //optional
-	ignoreHelper:false //optional
+	ignoreHelper:false, //optional
+	partialPath: './../partials', //optional
+	helperPath: './../partials', //optional
 }
 ```
 
@@ -85,6 +73,8 @@ where in ```.json``` files you can add
         "/css/homepage.css",
         "/js/homepage.js"
     ],
+    "partials%add": [],
+    "helpers%add": [],
     "title":"A new page title.",
     "page":{
         "title":"Welcome",
@@ -99,6 +89,9 @@ to use as input for the processing of files. This means that this Handlebars tem
 * use extra files only for this template with ```files%add```
 * use extra context like title / page to use in your template as ```{{title}}``` and ```{{page.title}}```
 * use ```targetPath``` to adjust the name of the file being saved relative to the working directory.
+* ```%add``` is synonym to extending the properties ```files```,```partials```,```helpers```. You can also overwrite, but could introduce new issues due to expected results.
+* ```partials``` are the needed partials for this page. Use ```partialPath``` to define the source directory for these partials and the extension being used if they are not ```./../partials``` and ```.html```
+* ```helpers``` are the needed helpers for this page. Use ```helperPath``` to define the source directory for these helpers. The only extension allowed is ```.js```
 
 ##### assets.templatePath (optional)
 Type: `String`
@@ -119,6 +112,16 @@ Define the path which is used inside the processed ```.html``` files (like ```/j
 Type: `String`
 Default value: `.`  
 Define the path where all concatenated files will be put. These files are all combinations of (separate) ```js``` or ```css``` files. You can choose to put them in an alternate folder to minify (```grunt-contrib-uglify``` or ```grunt-contrib-cssmin```) or put them in the production folder.
+
+##### assets.partialPath (optional)
+Type: `String`
+Default value: `./../partials`  
+Default directory where all partials are stored. By using ```custom/directory/*.hbp``` you can also define different extension is you wish to use. See ```partials``` property in your ```json``` context files for the file to use (without an extension).
+
+##### assets.helperPath (optional)
+Type: `String`
+Default value: `./../helpers`  
+Default directory where all partials are stored. Only ```js``` files are used, so provide the default folder and all ```js``` files will be accessible in your ```json``` context files. (see ```helpers``` property)
 
 ##### assets.ignoreHelper (optional)
 Type: `Boolean`
@@ -197,6 +200,8 @@ Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+0.7.1 - Cleanup of documentation + more generic approach to partials/helpers definition
+0.7.0 - Rewrote plugin to support more advanced usage of partials/helpers per page.
 0.6.0 - Rewrote plugin to enable "extends" mechanism as an option (not as default) + added examples + adjusted Gruntfile.js options definition + renamed options + fixed empty variables  
 0.5.0 - Added "extends" mechanism to limit the file-paths needed in the context-files (normally .json files) which means you have a built-in option to include JS/CSS/?-files in an optimized way inside your ```<head>```  
 0.4.3 - If no .json file is mentioned, the template context will be defaulted to {}  
@@ -214,8 +219,5 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 * (?) add or ignore target.options.partials/helpers
 * (?) detect duplicate definitions of context &amp; helpers/partials
 * (?) use lowercase to detect wrong definitions of code or not useful
-* Add partials/helpers inside context files (see base.json for example)
-* ! More flexible targetPath paths (parent-directories)
 * ! use target-directory for targetPath > check destination for that?
-* Other filenames than index.html possible (export already done)
 * Provide single json/context to all files inside Gruntfile.js

@@ -10,6 +10,8 @@
 
 //TODO ALL references to itself need to be switched = memory leak
 
+//TODO helpersPath / partialsPath optional (simyo = ../name default)
+
 module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
@@ -32,13 +34,11 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     staticHandlebars: {
-        options:{
-            partials:'test/fixtures/partials/**/*.hbp',
-            helpers:'test/fixtures/helpers/**/*.js'
-        },
         usePartials:{
             options:{
-                helpers:[]
+                assets:{
+                    partialPath:'test/fixtures/partials/*.hbp'
+                }
             },
             files:{
                 'tmp/usePartials/*.html':'test/fixtures/homepage/*.hbt'
@@ -46,24 +46,42 @@ module.exports = function(grunt) {
         },
         useHelpers:{
             options:{
-                partials:[]
+                assets:{
+                    helperPath:'test/fixtures/helpers'
+                }
             },
             files:{
                 'tmp/useHelpers/*.html':'test/fixtures/help/*.hbt'
             }
         },
         usePartialsAndHelpers:{
+            options:{
+                assets:{
+                    partialPath:'test/fixtures/partials/*.hbp',
+                    helperPath:'test/fixtures/helpers'
+                }
+            },
             files:{
                 'tmp/usePartialsAndHelpers/*.html':'test/fixtures/homepage/*.hbt'
             }
         },
         renderFixedTemplate:{
+            options:{
+                assets:{
+                    partialPath:'test/fixtures/partials/*.hbp',
+                    helperPath:'test/fixtures/helpers'
+                }
+            },
             files:{
                 'tmp/renderFixedTemplate/index.html':'test/fixtures/homepage/index.hbt'
             }
         },
         renderFixedTemplateWithOtherContext:{
             options:{
+                assets:{
+                    partialPath:'test/fixtures/partials/*.hbp',
+                    helperPath:'test/fixtures/helpers'
+                },
                 json:'test/fixtures/homepage/different.json'
             },
             files:{
@@ -92,6 +110,12 @@ module.exports = function(grunt) {
             ]
         },
         renderInclude:{
+            options:{
+                assets:{
+                    partialPath:'test/fixtures/partials/*.hbp',
+                    helperPath:'test/fixtures/helpers'
+                }
+            },
             files:{'tmp/renderInclude/*.html':'test/fixtures/campaign/*.hbt'}
         },
         renderIgnore:{
@@ -102,7 +126,9 @@ module.exports = function(grunt) {
                 assets:{
                     sourcesPath: 'test/assets', //used for JS/CSS files
                     packagedFilesPath: 'tmp/packages',
-                    assetsPath: '/'
+                    assetsPath: '/',
+                    partialPath:'test/fixtures/partials/*.hbp',
+                    helperPath:'test/fixtures/helpers'
                 }
             },
             files:{'tmp/renderComplex/**/*.html':'test/fixtures/complex/**/*.hbt'}
@@ -111,7 +137,9 @@ module.exports = function(grunt) {
             options:{
                 assets:{
                     sourcesPath: 'test/assets', //used for JS/CSS files but now skip concatenating files
-                    assetsPath: '/'
+                    assetsPath: '/',
+                    partialPath:'test/fixtures/partials/*.hbp',
+                    helperPath:'test/fixtures/helpers'
                 }
             },
             files:{'tmp/renderComplexWithoutPackages/**/*.html':'test/fixtures/complex/**/*.hbt'}

@@ -1,4 +1,7 @@
 {
+    "partials": [
+        "nav"
+    ],
     "title":"An old page title.",
     "page":{
         "title":"Bye bye",

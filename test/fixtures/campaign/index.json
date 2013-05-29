@@ -1,3 +1,9 @@
 {
+    "partials":[
+        "contentBlock"
+    ],
+    "helpers":[
+        "include"
+    ],
     "blockContent":"Some block content that can be used throughout the campaign site, like sharing buttons or text."
 }

@@ -1,8 +1,5 @@
 {
-    "files": [
-        "/css/homepage.css",
-        "/js/homepage.js"
-    ],
+    "files": [],
     "partials": [
         "contentBlock",
         "nav"
