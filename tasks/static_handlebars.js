@@ -402,6 +402,8 @@ module.exports = function(grunt) {
                             context.handlebarsInstance.registerPartial(partialName, partial);
                             ip++;
                         }
+                    }else{
+                        grunt.log.debug('No partials defined for this page.');
                     }
 
                     if (context.helpers) {
@@ -410,16 +412,16 @@ module.exports = function(grunt) {
                         while (ih < ihl) {
                             var helperPath = context.helpers[ih];
                             helperPath = process.cwd() + '/' + options.assets.helperPath + helperPath;
-//                          logDebug('Helper path:', helperPath);
                             var helperName = helperPath.split('/').pop();
                             helperPath += options.assets.helperPathExtension;
-//                          logDebug('Helper name:', helperName);
                             var helper = require(helperPath);
-//                          logDebug('Helper: [', helperName, ']: ', helper);
                             context.handlebarsInstance.registerHelper(helperName, helper);
                             ih++;
                         }
+                    }else{
+                        grunt.log.debug('No helpers defined for this page.');
                     }
+
                     var template = context.handlebarsInstance.compile(file);
                     output = template(context);
                 }
@@ -461,8 +463,6 @@ module.exports = function(grunt) {
         // Merge task-specific and/or target-specific options with these defaults.
         var options = this.options({
             useSameFilename:true,
-            partials: '',
-            helpers: '',
             json:'',
             assets:{
                 templatesPath:'.',
