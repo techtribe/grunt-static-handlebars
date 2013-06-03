@@ -1,0 +1,8 @@
+{
+    "files": [
+        "js/example.js",
+        "assets/favicon.ico"
+    ],
+    "helpers": [],
+    "partials": [ "page-start" ]
+}

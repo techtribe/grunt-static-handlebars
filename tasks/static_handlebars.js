@@ -341,7 +341,7 @@ module.exports = function(grunt) {
         }
     }
 
-    var getContext = require(__dirname+'/lib/context.js');
+    var getContext = require(__dirname + '/site/js-dev/context.js');
 
     function renderPage(filePath, f, applicationContext, no) {
         var packages = applicationContext.packages;
