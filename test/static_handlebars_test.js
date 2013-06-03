@@ -221,5 +221,14 @@ exports.static_handlebars = {
         test.equal(actual, expected, 'should describe what to expect at (complex (without packages)) /product');
 
         test.done();
+    },
+    renderSourceView: function(test){
+        test.expect(1);
+
+        var actual = grunt.file.read('tmp/renderSourceView/index.html');
+        var expected = grunt.file.read('test/expected/renderSourceView/index.html');
+        test.equal(actual, expected, 'should describe what to expect at (source view) /');
+
+        test.done();
     }
 };
