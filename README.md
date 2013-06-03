@@ -94,46 +94,54 @@ to use as input for the processing of files. This means that this Handlebars tem
 * ```helpers``` are the needed helpers for this page. Use ```helperPath``` to define the source directory for these helpers. The only extension allowed is ```.js```
 
 ##### assets.templatePath (optional)
-Type: `String`
+Type: `String`  
 Default value: `.`  
 Already set but you can override the base path to find your base context-files that are used in ```.json``` as the ```extends:['base.json']``` mechanism to keep your ```files```-property in ```.json``` files small and in line with the desired base context to use.
 
 ##### assets.sourcesPath
-Type: `String`
+Type: `String`  
 Default value: `.`  
 Define the path where your sources (so what comes before ```js/base.js```) originating from the ```Gruntfile.js``` directory.
 
 ##### assets.assetsPath
-Type: `String`
+Type: `String`  
 Default value: `/`  
 Define the path which is used inside the processed ```.html``` files (like ```/js/base.js```).
 
 ##### assets.packagedFilesPath (optional)
-Type: `String`
+Type: `String`  
 Default value: `.`  
 Define the path where all concatenated files will be put. These files are all combinations of (separate) ```js``` or ```css``` files. You can choose to put them in an alternate folder to minify (```grunt-contrib-uglify``` or ```grunt-contrib-cssmin```) or put them in the production folder.
 
 ##### assets.partialPath (optional)
-Type: `String`
+Type: `String`  
 Default value: `./../partials`  
 Default directory where all partials are stored. By using ```custom/directory/*.hbp``` you can also define different extension is you wish to use. See ```partials``` property in your ```json``` context files for the file to use (without an extension).
 
 ##### assets.helperPath (optional)
-Type: `String`
+Type: `String`  
 Default value: `./../helpers`  
 Default directory where all partials are stored. Only ```js``` files are used, so provide the default folder and all ```js``` files will be accessible in your ```json``` context files. (see ```helpers``` property)
 
 ##### assets.ignoreHelper (optional)
-Type: `Boolean`
+Type: `Boolean`  
 Default value: `false`  
 If you would like to overwrite the use of ```{{staticHandlebarsFiles}}``` inside your templates, reset to true and register your own helper with the ```staticHandlebarsFiles``` name.
 
-#### json
+#### json (optional)
 Type: `String` or `Array`  
 Default value: `''`  
-Extension: `.json`
-
+Extension: `.json`  
 A string or array value that resembles the files to use as context-input (json). It will resemble the same amount of files as the total amount of templates inside this subtask (target).
+
+#### sourceView (optional)
+Type: `Boolean`  
+Default value: `false`  
+A Boolean to define if the `sourcesPath` can be used as root folder for Nginx / Apache for a no-build environment, where you can debug HTML/CSS changes without the need of a `build` task.  
+
+See `test/fixtures/sourceView` and `Gruntfile.js` for an example how to use. 
+
+_Note: To install the needed client-side scripts to support this feature, it is needed to execute the plugin once._
 
 #### files
 Type: `Object` or `Array`  
@@ -200,6 +208,7 @@ Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+0.8.0 - Source-view feature added + example added  
 0.7.1 - Cleanup of documentation + more generic approach to partials/helpers definition  
 0.7.0 - Rewrote plugin to support more advanced usage of partials/helpers per page.  
 0.6.0 - Rewrote plugin to enable "extends" mechanism as an option (not as default) + added examples + adjusted Gruntfile.js options definition + renamed options + fixed empty variables  
