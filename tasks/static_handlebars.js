@@ -33,6 +33,7 @@ module.exports = function(grunt) {
         errors:[]
     };
     var files;
+    var sourceViewInitiated = false;
 
     grunt.file.defaultEncoding = 'utf8';
 
@@ -281,6 +282,32 @@ module.exports = function(grunt) {
 //      grunt.log.debug("Extended:", target);
     }
 
+    function copyFile(source,target){
+        //only if target does not exist
+        if(!grunt.file.exists(target)){
+            sourceViewInitiated = true;
+            grunt.file.write(target,grunt.file.read(source));
+        }
+    }
+
+    function initiateSourceViewFiles(path){
+        //add files to source directory when options.sourceView=true
+        if(path.charAt(path.length-1) != '/'){
+            path += '/';
+        }
+        copyFile(__dirname+'/lib/context.js',path+'js-dev/context.js');
+        copyFile(__dirname+'/../node_modules/handlebars/dist/handlebars.js',path+'js-dev/handlebars.js');
+        copyFile(__dirname+'/lib/interpret.js',path+'js-dev/interpret.js');
+        copyFile(__dirname+'/lib/lodash.js',path+'js-dev/lodash.js');
+        copyFile(__dirname+'/lib/index.html',path+'index.html');
+
+        if(sourceViewInitiated){
+            //file changed, so add warning
+            grunt.log.subhead('SOURCE VIEW WARNING!');
+            grunt.log.error('Use "'+path+'" folder as the root folder in Apache/Nginx to use the source-view-feature!');
+        }
+    }
+
     function initiateAssetsObject(options){
         if(options.assets === undefined || options.assets === null){
             options.assets = {};
@@ -341,7 +368,7 @@ module.exports = function(grunt) {
         }
     }
 
-    var getContext = require(__dirname + '/site/js-dev/context.js');
+    var getContext = require(__dirname + '/lib/context.js');
 
     function renderPage(filePath, f, applicationContext, no) {
         var packages = applicationContext.packages;
@@ -471,11 +498,17 @@ module.exports = function(grunt) {
                 packagedFilesPath:'.',
                 concatenate:false,
                 ignoreHelper:false
-            }
+            },
+            sourceView:false
         });
 
-        //======= DEFAULT VALUES =======
-        //check if assets is not complete
+        //check if source view assets are copied
+        if(options.sourceView){
+            //copy files
+            initiateSourceViewFiles(options.assets.sourcesPath);
+        }
+
+        //check if assets is incomplete
         initiateAssetsObject(options);
 
         var applicationContext = {

@@ -143,6 +143,18 @@ module.exports = function(grunt) {
                 }
             },
             files:{'tmp/renderComplexWithoutPackages/**/*.html':'test/fixtures/complex/**/*.hbt'}
+        },
+        renderSourceView:{
+            options:{
+                assets:{
+                    sourcesPath: 'test/fixtures/sourceView/', //used for JS/CSS files but now skip concatenating files
+                    assetsPath: 'test/fixtures/sourceView/assets',
+                    partialPath:'test/fixtures/sourceView/handlebars/partials/*.html',
+                    helperPath:'test/fixtures/sourceView/handlebars/helpers'
+                },
+                sourceView:true
+            },
+            files:{'tmp/renderSourceView/**/*.html':'test/fixtures/sourceView/handlebars/templates/**/*.html'}
         }
     },
 
