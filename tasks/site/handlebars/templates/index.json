@@ -1,0 +1,5 @@
+{
+    "extends": "base.json",
+    "title": "Example page",
+    "helpers%add": [ "example" ]
+}
