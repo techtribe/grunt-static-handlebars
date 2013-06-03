@@ -206,47 +206,6 @@
 //      grunt.log.debug("Extended:", target);
     }
 
-    function getContext(basePath, jsonFile, getResourceObject, trace, prefix) {
-        var context = { targetPath: null };
-        prefix = prefix || '';
-        var childContext = { "extends": [] };
-        try {
-            // if file not exist, grunt will pop up an error
-            childContext = getResourceObject(jsonFile);
-        } catch (error) {
-            childContext = null;
-            if (error instanceof SyntaxError) {
-                logError('Your JSON file (' + jsonFile + ') has no valid syntax', error);
-            } else if (error.origError && error.origError.errno === 34) {
-                //no json file found
-                logError(new Error('No context file (like ' + error.origError.path+') provided at ' + jsonFile + ' . See documentation for more information.'));
-            } else{
-                logError(error);
-            }
-        }
-        if (childContext !== null) {
-            trace["extends"].push(jsonFile);
-        }
-        if (childContext && childContext["extends"]) {
-            var supers = typeof childContext["extends"] === 'string' ? [childContext["extends"]] : childContext["extends"];
-            _.each(supers, function(superContextFile) {
-                var superContext = getContext(basePath, basePath + '/' + superContextFile, getResourceObject, trace, prefix + '  ');
-                if (superContext !== null) {
-                    extend(context, superContext);
-                }
-            });
-            extend(context, childContext);
-        } else {
-            context = childContext;
-        }
-        if (context === null) {
-            logDebug(prefix + 'Failed to get context: [' + jsonFile + ']')
-        } else {
-            logDebug(prefix + 'Got context: [' + jsonFile + ']');
-        }
-        return context;
-    }
-
     function executeCode(code) {
 //      logDebug('Code: [[' + code + ']]');
         var module = {};
@@ -346,6 +305,10 @@
             }
         } else {
             logDebug('Finished loading JavaScript');
+            if (window.onload) {
+                logDebug("Execute window on-load:", window.onload)
+                window.onload();
+            }
         }
     }
 
@@ -430,7 +393,15 @@
             var contextUrl = templateUrlParts.join('.') + contextSuffix;
             logDebug('Context URL: ' + contextUrl);
             var trace = { "extends": [] };
-            var context = getContext(urlPrefix, contextUrl, getResourceObject, trace);
+            var applicationContext = {
+                getResourceObject: getResourceObject,
+                logDebug: logDebug,
+                logError: logError,
+                packages: {},
+                errors: [],
+                options: {}
+            };
+            var context = getContext(urlPrefix, contextUrl, applicationContext, trace);
             if (!context) {
                 context = {};
             }
@@ -528,6 +499,7 @@
     var result = prepare();
 
     var oldOnLoad = window.onload;
+    logDebug('Window on-load:', oldOnLoad);
     function replaceBody () {
         if (result != null) {
             var body = document.getElementsByTagName('body')[0];
@@ -535,6 +507,7 @@
             if (oldOnLoad) {
                 oldOnLoad();
             }
+            window.onload = null;
             loadJavaScript(javaScriptResources);
         }
     }
