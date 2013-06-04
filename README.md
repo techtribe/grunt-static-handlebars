@@ -209,7 +209,7 @@ Some remarks:
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-0.8.0 - Source-view feature added + example added  
+0.8.1 - Source-view feature added + example added  
 0.7.1 - Cleanup of documentation + more generic approach to partials/helpers definition  
 0.7.0 - Rewrote plugin to support more advanced usage of partials/helpers per page.  
 0.6.0 - Rewrote plugin to enable "extends" mechanism as an option (not as default) + added examples + adjusted Gruntfile.js options definition + renamed options + fixed empty variables  
