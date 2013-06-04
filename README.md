@@ -203,6 +203,7 @@ Some remarks:
 * ```.html``` files can also be referenced as "files" to use in your GruntFile
 * filenames can be connected by ```-```, ```+```,```_```
 * if [Handlebars](http://handlebarsjs.com)-templates have no markup (like ```{{```) it will copied as plaintext.
+* In any of the helpers you will need to replace the global `Handlebars` reference into `this.handlebarsInstance` to ensure the helper can parse Strings and use the needed functions.
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
