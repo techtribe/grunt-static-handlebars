@@ -160,16 +160,18 @@
         var i = 0;
         var il = list.length;
         while (i < il) {
-            var resource = list[i];
-            logDebug('Resource:', resource);
-            if (typeof resource === 'string') {
-                resource = { path: resource };
+            var itemSpec = list[i];
+            logDebug('Process resource:', itemSpec);
+            itemSpec = resource(itemSpec);
+            logDebug('Resource:', itemSpec);
+            if (typeof itemSpec === 'string') {
+                itemSpec = { path: itemSpec };
             }
-            var path = resource.path;
+            var path = itemSpec.path;
             if (path) {
-                resource.url = pathPrefix + path + extension;
-                logDebug('Resource URL:', resource.url);
-                handler(resource);
+                itemSpec.url = itemSpec.mode === 'external' ? path : pathPrefix + path + extension;
+                logDebug('Resource URL:', itemSpec.url);
+                handler(itemSpec);
             }
             i++;
         }
@@ -407,6 +409,7 @@
             }
             context["extends"] = trace["extends"];
             context.handlebarsInstance = Handlebars;
+            context.pagePath = templateUrl.substr(urlPrefix.length);
             logDebug('Context:', context);
             logDebug('Context files:', context.files);
 
@@ -416,8 +419,9 @@
                     var head = document.getElementsByTagName('head')[0];
                     processUrls(context.files, function(resource) {
                         var url = resource.url;
+                        var tp = resource.type;
                         logDebug('File URL:', url);
-                        if (url.substr(url.length - 3) == '.js') {
+                        if (tp === '*.js') {
                             logDebug('Found JavaScript resource:', resource);
                             javaScriptResources.push(resource);
                             /*
@@ -431,7 +435,7 @@
                             script.setAttribute('src', url);
                             document.getElementsByTagName('head')[0].appendChild(script);
                             //*/
-                        } else if (url.substr(url.length - 4) == '.css') {
+                        } else if (tp === '*.css') {
                             logDebug('CSS resource: ' + url);
                             var qualifier = resource.qualifier;
                             var conditional = addConditional(

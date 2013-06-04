@@ -1,52 +1,37 @@
 module.exports = function(){
-    if(!this.files){
+    if (!this.files) {
         return '';
     }
+    var logDebug = this.logDebug;
+
+    var resource = require(__dirname + '/../lib/resource.js');
+    var assetsPath = grunt.option('assetsPath');
 
     var output = '';
-    _.each(this.files,function(itemSpec){
-        if (typeof itemSpec === 'string') {
-            itemSpec = { path: itemSpec };
-        }
-        var item = itemSpec.path;
-        var tp = item;
-        var ext = item.substr(item.lastIndexOf('.')+1);
-        if(ext === 'js'){
-            tp = '*.js';
-        }else if(ext === 'css'){
-            tp = '*.css';
-        }else if(ext === 'ico'){
-            tp = '*.ico';
-        }
+    _.each(this.files, function(itemSpec){
+        itemSpec = resource(itemSpec);
+        logDebug('Item specification:', itemSpec);
         var suffix = '';
-        if (itemSpec.qualifier && itemSpec.qualifier.substring(0, 2) == 'IE') {
-            var parts = itemSpec.qualifier.split('-');
-            var comparator = parts[1];
-            var version = parts[2];
-            output += '    <!--[if ' + comparator + ' IE ' + version + ']>\n';
+        if (itemSpec.ieComparator && itemSpec.ieVersion) {
+            output += '    <!--[if ' + itemSpec.ieComparator + ' IE ' + itemSpec.ieVersion + ']>\n';
             suffix =  '    <![endif]-->\n'
         }
-        var folder = grunt.option('assetsPath');
-        if(folder.charAt(folder.length-1) === '/'){
-            folder = folder.substr(0,folder.length-1);
-        }
-        if(item.charAt(0) === '/'){
-            item = item.substr(1);
-        }
-        switch(tp){
+        var tp = itemSpec.type;
+        var url = itemSpec.url;
+        switch (tp) {
             case '*.js':
-                output += '    <script src="'+folder+'/'+item+'" type="text/javascript"></script>\n';
+                output += '    <script src="' + url + '" type="text/javascript"></script>\n';
                 break;
             case '*.css':
-                output += '    <link href="'+folder+'/'+item+'" type="text/css" media="screen" rel="stylesheet"/>\n';
+                output += '    <link href="' + url + '" type="text/css" media="screen" rel="stylesheet"/>\n';
                 break;
             case '*.ico':
-                output += '    <link rel="shortcut icon" href="/assets/'+item+'"/>\n';
+                output += '    <link rel="shortcut icon" href="' + url + '"/>\n';
                 break;
         }
         output += suffix;
     });
     //remove last \n
-    output = output.substr(0,output.length-1);
+    output = output.substr(0, output.length - 1);
     return new this.handlebarsInstance.SafeString(output);
 }

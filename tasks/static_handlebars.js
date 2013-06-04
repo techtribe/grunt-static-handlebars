@@ -168,23 +168,26 @@ module.exports = function(grunt) {
             var file = files[i];
             var fileName;
             var qualifier;
+            var external = false;
             if (typeof file === 'string') {
                 fileName = file;
                 qualifier = '';
             } else {
                 fileName = file.path;
                 qualifier = file.qualifier;
+                external = file.external;
             }
 
-            var extension = fileName.split('.').pop();
+            var baseName = fileName.split('/').pop();
+            var extension = baseName.replace(/^.*([.]([^.]*))?$/, '$2');
             var packageType = extension + (qualifier ? ' ' + qualifier : '');
             if (!packageFiles[packageType]) {
                 packageFiles[packageType] = [];
             }
-            if (extension == 'js' || extension == 'css' || qualifier) {
+            if (!external && (extension == 'js' || extension == 'css' || qualifier)) {
                 packageFiles[packageType].push(fileName);
             } else {
-                otherFiles.push(fileName);
+                otherFiles.push(file);
             }
             i++;
         }
@@ -374,6 +377,7 @@ module.exports = function(grunt) {
         var packages = applicationContext.packages;
         var errors = applicationContext.errors;
         var options = applicationContext.options;
+        var templatesPath = options.assets.templatesPath;
         //input
         var file = grunt.file.read(filePath);
         var output = '';
@@ -391,8 +395,9 @@ module.exports = function(grunt) {
             }
 
             var trace = { extends: [] };
-            var context = getContext(options.assets.templatesPath, jsonFile, applicationContext, trace);
+            var context = getContext(templatesPath, jsonFile, applicationContext, trace);
             context.extends = trace.extends;
+            context.pagePath = filePath.substr(0, templatesPath.length) === templatesPath ? filePath.substr(templatesPath.length) : filePath;
             grunt.log.debug('Context:', context);
 
             //adjust filenames due to concatenation
@@ -418,6 +423,7 @@ module.exports = function(grunt) {
                     var fileHelperPath = __dirname + '/helper/' + filesHelperName;
                     var fileHelper = require(fileHelperPath);
                     context.handlebarsInstance.registerHelper(filesHelperName, fileHelper);
+                    context.logDebug = logDebug;
 
                     if (context.partials) {
                         var ip = 0;
@@ -463,10 +469,10 @@ module.exports = function(grunt) {
             var path;
             if (context.targetPath != undefined) {
                 //originate from default folder with new filePath
-                path = destinationPath(f.dest,options.assets.templatesPath+'/'+context.targetPath,options.assets.templatesPath);
+                path = destinationPath(f.dest,templatesPath+'/'+context.targetPath,templatesPath);
                 grunt.log.debug("Custom path:", path);
             } else {
-                path = destinationPath(f.dest,filePath,options.assets.templatesPath);
+                path = destinationPath(f.dest,filePath,templatesPath);
                 var baseName = path.split('/').pop();
                 //to make a static file, you will need to make "folder/index.html" to enable "folder" as a link
                 if (baseName != 'index.html') {
@@ -479,9 +485,9 @@ module.exports = function(grunt) {
             grunt.log.debug('Save:',path);
             grunt.file.write(path,output);
         }else{
-            grunt.log.debug('Save:',destinationPath(f.dest,filePath,options.assets.templatesPath));
+            grunt.log.debug('Save:',destinationPath(f.dest,filePath,templatesPath));
             //just a html file, no handlebars
-            grunt.file.write(destinationPath(f.dest,filePath,options.assets.templatesPath),file);
+            grunt.file.write(destinationPath(f.dest,filePath,templatesPath),file);
         }
     }
 
