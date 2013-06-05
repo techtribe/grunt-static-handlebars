@@ -175,15 +175,16 @@ module.exports = function(grunt) {
             } else {
                 fileName = file.path;
                 qualifier = file.qualifier;
-                external = file.external;
+                external = file.mode && file.mode === 'external';
             }
 
             var baseName = fileName.split('/').pop();
-            var extension = baseName.replace(/^.*([.]([^.]*))?$/, '$2');
+            var extension = baseName.replace(/^.*?([.]([^.]*))?$/, '$2');
             var packageType = extension + (qualifier ? ' ' + qualifier : '');
             if (!packageFiles[packageType]) {
                 packageFiles[packageType] = [];
             }
+            logDebug('File:', fileName, baseName, extension, qualifier, external);
             if (!external && (extension == 'js' || extension == 'css' || qualifier)) {
                 packageFiles[packageType].push(fileName);
             } else {

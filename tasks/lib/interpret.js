@@ -409,6 +409,7 @@
             }
             context["extends"] = trace["extends"];
             context.handlebarsInstance = Handlebars;
+            context.logDebug = logDebug;
             context.pagePath = templateUrl.substr(urlPrefix.length);
             logDebug('Context:', context);
             logDebug('Context files:', context.files);
