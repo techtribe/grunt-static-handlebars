@@ -1,10 +1,10 @@
 // resource.js
 
-function resource(itemSpec, assetsPath) {
+function resource(itemSpec, assetsUrlPrefix) {
     if (typeof itemSpec === 'string') {
         itemSpec = { path: itemSpec };
     }
-    assetsPath = typeof assetsPath === 'string' ? assetsPath : '/assets';
+    assetsUrlPrefix = typeof assetsUrlPrefix === 'string' ? assetsUrlPrefix : '/';
 
     var item = itemSpec.path;
     if (item.charAt(0) === '/'){
@@ -30,7 +30,7 @@ function resource(itemSpec, assetsPath) {
     if (itemSpec.mode && itemSpec.mode === 'external') {
         url = itemSpec.path;
     } else {
-        var folder = assetsPath;
+        var folder = assetsUrlPrefix;
         if (folder.charAt(folder.length - 1) === '/'){
             folder = folder.substr(0, folder.length - 1);
         }

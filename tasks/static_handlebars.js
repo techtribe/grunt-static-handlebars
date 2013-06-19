@@ -329,13 +329,6 @@ module.exports = function(grunt) {
             options.assets.sourcesPath = '.';
         }
 
-        if(options.assets.assetsPath === undefined || options.assets.assetsPath === ''){
-            options.assets.assetsPath = '.';
-            grunt.option('assetsPath','/');
-        }else{
-            grunt.option('assetsPath',options.assets.assetsPath);
-        }
-
         if(options.assets.packagedFilesPath === undefined || options.assets.packagedFilesPath === ''){
             options.assets.packagedFilesPath = '.';
         }
@@ -402,6 +395,7 @@ module.exports = function(grunt) {
             var context = getContext(templatesPath, jsonFile, applicationContext, trace);
             context.extends = trace.extends;
             context.pagePath = filePath.substr(0, templatesPath.length) === templatesPath ? filePath.substr(templatesPath.length) : filePath;
+            context.assetsUrlPrefix = context.assetsUrlPrefix || '/';
             grunt.log.debug('Context:', context);
 
             //adjust filenames due to concatenation
@@ -504,7 +498,6 @@ module.exports = function(grunt) {
             assets:{
                 templatesPath:'.',
                 sourcesPath:'.',
-                assetsPath:'.',
                 packagedFilesPath:'.',
                 concatenate:false,
                 ignoreHelper:false
