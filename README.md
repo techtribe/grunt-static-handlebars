@@ -55,7 +55,6 @@ _Note: if you use this plugin for non-html files you can ignore this option as l
 {
 	templatesPath:'.',//optional
 	sourcesPath:'.',
-	assetsPath:'/',
 	packagedFilesPath:'.', //optional
 	ignoreHelper:false, //optional
 	partialPath: './../partials', //optional
@@ -69,6 +68,7 @@ where in ```.json``` files you can add
 {
     "extends": [ "base.json" ],
     "targetPath" : "contact.html",
+    "assetsUrlPrefix": "/"
     "files%add": [
         "/css/homepage.css",
         "/js/homepage.js"
@@ -103,7 +103,7 @@ Type: `String`
 Default value: `.`  
 Define the path where your sources (so what comes before ```js/base.js```) originating from the ```Gruntfile.js``` directory.
 
-##### assets.assetsPath
+##### assets.assetsUrlPrefix
 Type: `String`  
 Default value: `/`  
 Define the path which is used inside the processed ```.html``` files (like ```/js/base.js```).
@@ -184,7 +184,6 @@ grunt.initConfig({
         	assets:{
             	sourcesPath: 'test/assets', //used for JS/CSS files
 				packagedFilesPath: 'tmp/packages',
-				assetsPath: '/'
 			}
 		},
 		files:{'tmp/complext/**/*.html':'test/fixtures/complex/**/*.hbt'}
