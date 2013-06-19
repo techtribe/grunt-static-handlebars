@@ -126,7 +126,6 @@ module.exports = function(grunt) {
                 assets:{
                     sourcesPath: 'test/assets', //used for JS/CSS files
                     packagedFilesPath: 'tmp/packages',
-                    assetsPath: '/',
                     partialPath:'test/fixtures/partials/*.hbp',
                     helperPath:'test/fixtures/helpers'
                 }
@@ -137,7 +136,6 @@ module.exports = function(grunt) {
             options:{
                 assets:{
                     sourcesPath: 'test/assets', //used for JS/CSS files but now skip concatenating files
-                    assetsPath: '/',
                     partialPath:'test/fixtures/partials/*.hbp',
                     helperPath:'test/fixtures/helpers'
                 }
@@ -148,7 +146,6 @@ module.exports = function(grunt) {
             options:{
                 assets:{
                     sourcesPath: 'test/fixtures/sourceView/', //used for JS/CSS files but now skip concatenating files
-                    assetsPath: 'test/fixtures/sourceView/assets',
                     partialPath:'test/fixtures/sourceView/handlebars/partials/*.html',
                     helperPath:'test/fixtures/sourceView/handlebars/helpers'
                 },
