@@ -37,7 +37,7 @@ module.exports = function(grunt) {
         usePartials:{
             options:{
                 assets:{
-                    partialPath:'test/fixtures/partials/*.hbp'
+                    partialExtension: 'hbp'
                 }
             },
             files:{
@@ -45,43 +45,22 @@ module.exports = function(grunt) {
             }
         },
         useHelpers:{
-            options:{
-                assets:{
-                    helperPath:'test/fixtures/helpers'
-                }
-            },
             files:{
                 'tmp/useHelpers/*.html':'test/fixtures/help/*.hbt'
             }
         },
         usePartialsAndHelpers:{
-            options:{
-                assets:{
-                    partialPath:'test/fixtures/partials/*.hbp',
-                    helperPath:'test/fixtures/helpers'
-                }
-            },
             files:{
                 'tmp/usePartialsAndHelpers/*.html':'test/fixtures/homepage/*.hbt'
             }
         },
         renderFixedTemplate:{
-            options:{
-                assets:{
-                    partialPath:'test/fixtures/partials/*.hbp',
-                    helperPath:'test/fixtures/helpers'
-                }
-            },
             files:{
                 'tmp/renderFixedTemplate/index.html':'test/fixtures/homepage/index.hbt'
             }
         },
         renderFixedTemplateWithOtherContext:{
             options:{
-                assets:{
-                    partialPath:'test/fixtures/partials/*.hbp',
-                    helperPath:'test/fixtures/helpers'
-                },
                 json:'test/fixtures/homepage/different.json'
             },
             files:{
@@ -110,12 +89,6 @@ module.exports = function(grunt) {
             ]
         },
         renderInclude:{
-            options:{
-                assets:{
-                    partialPath:'test/fixtures/partials/*.hbp',
-                    helperPath:'test/fixtures/helpers'
-                }
-            },
             files:{'tmp/renderInclude/*.html':'test/fixtures/campaign/*.hbt'}
         },
         renderIgnore:{
@@ -124,10 +97,8 @@ module.exports = function(grunt) {
         renderComplex:{
             options:{
                 assets:{
-                    sourcesPath: 'test/assets', //used for JS/CSS files
-                    packagedFilesPath: 'tmp/packages',
-                    partialPath:'test/fixtures/partials/*.hbp',
-                    helperPath:'test/fixtures/helpers'
+                    filesRoot: 'test/assets', //used for JS/CSS files
+                    packagedFilesPath: 'tmp/packages'
                 }
             },
             files:{'tmp/renderComplex/**/*.html':'test/fixtures/complex/**/*.hbt'}
@@ -135,9 +106,7 @@ module.exports = function(grunt) {
         renderComplexWithoutPackages:{
             options:{
                 assets:{
-                    sourcesPath: 'test/assets', //used for JS/CSS files but now skip concatenating files
-                    partialPath:'test/fixtures/partials/*.hbp',
-                    helperPath:'test/fixtures/helpers'
+                    filesRoot: 'test/assets' //used for JS/CSS files but now skip concatenating files
                 }
             },
             files:{'tmp/renderComplexWithoutPackages/**/*.html':'test/fixtures/complex/**/*.hbt'}
@@ -145,9 +114,7 @@ module.exports = function(grunt) {
         renderSourceView:{
             options:{
                 assets:{
-                    sourcesPath: 'test/fixtures/sourceView/', //used for JS/CSS files but now skip concatenating files
-                    partialPath:'test/fixtures/sourceView/handlebars/partials/*.html',
-                    helperPath:'test/fixtures/sourceView/handlebars/helpers'
+                    filesRoot: 'test/fixtures/sourceView/' //used for JS/CSS files but now skip concatenating files
                 },
                 sourceView:true
             },
