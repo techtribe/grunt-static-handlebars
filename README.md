@@ -64,7 +64,6 @@ options:{
 Type: `Object`
 
 An object to configure the use of ```{{staticHandlebarsFiles}}``` or your own helper to embed the creation of assets like ```js``` and ```css``` in an optimized way. This feature enables you to define the path inside ```.html``` files to concatenate them and copy them to a folder for post-processing (minify) or just in the right production folder.
-
 _Note: if you use this plugin for non-html files you can ignore this option as long as you don't use ```{{staticHandlebarsFiles}}``` in your Handlebars templates._
 
 ##### assets.filesRoot
