@@ -64,6 +64,7 @@ options:{
 Type: `Object`
 
 An object to configure the use of ```{{staticHandlebarsFiles}}``` or your own helper to embed the creation of assets like ```js``` and ```css``` in an optimized way. This feature enables you to define the path inside ```.html``` files to concatenate them and copy them to a folder for post-processing (minify) or just in the right production folder.
+
 _Note: if you use this plugin for non-html files you can ignore this option as long as you don't use ```{{staticHandlebarsFiles}}``` in your Handlebars templates._
 
 ##### assets.filesRoot
@@ -203,8 +204,8 @@ Use any properties that you like to add onto the context-object that will be use
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-0.8.5 - More restricted approach to streamline all options so it will also work in the sourceView + documentation updated
-0.8.1 - Source-view feature added + example added
+0.8.5 - More restricted approach to streamline all options so it will also work in the sourceView + documentation updated  
+0.8.1 - Source-view feature added + example added  
 0.7.1 - Cleanup of documentation + more generic approach to partials/helpers definition  
 0.7.0 - Rewrote plugin to support more advanced usage of partials/helpers per page.  
 0.6.0 - Rewrote plugin to enable "extends" mechanism as an option (not as default) + added examples + adjusted Gruntfile.js options definition + renamed options + fixed empty variables  
