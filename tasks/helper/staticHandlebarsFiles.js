@@ -1,15 +1,15 @@
 module.exports = function(){
-    if (!this.files) {
+    var context = this;
+    if (!context.files) {
         return '';
     }
-    var logDebug = this.logDebug;
+    var logDebug = context.logDebug;
 
     var resource = require(__dirname + '/../lib/resource.js');
-    var assetsPath = grunt.option('assetsPath');
 
     var output = '';
-    _.each(this.files, function(itemSpec){
-        itemSpec = resource(itemSpec);
+    _.each(context.files, function(itemSpec){
+        itemSpec = resource(itemSpec, context.assetsUrlPrefix);
         logDebug('Item specification:', itemSpec);
         var suffix = '';
         if (itemSpec.ieComparator && itemSpec.ieVersion) {
@@ -33,5 +33,5 @@ module.exports = function(){
     });
     //remove last \n
     output = output.substr(0, output.length - 1);
-    return new this.handlebarsInstance.SafeString(output);
+    return new context.handlebarsInstance.SafeString(output);
 }
