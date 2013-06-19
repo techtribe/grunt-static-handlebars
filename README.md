@@ -54,7 +54,7 @@ _Note: if you use this plugin for non-html files you can ignore this option as l
 ```js
 {
 	templatesPath:'.',//optional
-	sourcesPath:'.',
+	filesRoot:'.',
 	packagedFilesPath:'.', //optional
 	ignoreHelper:false, //optional
 	partialPath: './../partials', //optional
@@ -98,7 +98,7 @@ Type: `String`
 Default value: `.`  
 Already set but you can override the base path to find your base context-files that are used in ```.json``` as the ```extends:['base.json']``` mechanism to keep your ```files```-property in ```.json``` files small and in line with the desired base context to use.
 
-##### assets.sourcesPath
+##### assets.filesRoot
 Type: `String`  
 Default value: `.`  
 Define the path where your sources (so what comes before ```js/base.js```) originating from the ```Gruntfile.js``` directory.
@@ -137,7 +137,7 @@ A string or array value that resembles the files to use as context-input (json).
 #### sourceView (optional)
 Type: `Boolean`  
 Default value: `false`  
-A Boolean to define if the `sourcesPath` can be used as root folder for Nginx / Apache for a no-build environment, where you can debug HTML/CSS changes without the need of a `build` task.  
+A Boolean to define if the `filesRoot` can be used as root folder for Nginx / Apache for a no-build environment, where you can debug HTML/CSS changes without the need of a `build` task.
 
 See `test/fixtures/sourceView` and `Gruntfile.js` for an example how to use. 
 
@@ -182,7 +182,7 @@ grunt.initConfig({
     complexTarget: {
 	    options:{
         	assets:{
-            	sourcesPath: 'test/assets', //used for JS/CSS files
+            	filesRoot: 'test/assets', //used for JS/CSS files
 				packagedFilesPath: 'tmp/packages',
 			}
 		},

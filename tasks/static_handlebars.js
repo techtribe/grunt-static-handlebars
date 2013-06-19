@@ -213,7 +213,7 @@ module.exports = function(grunt) {
 //          grunt.log.debug('Package type:', packageType, parts, extension, qualifier);
             var packageGroupDirectory = options.assets.packagedFilesPath + '/' + extension;
             var suffix = qualifier + '.' + extension;
-            generatePackageGroup(packages[packageType], options.assets.sourcesPath, packageGroupDirectory, suffix, '\n\n');
+            generatePackageGroup(packages[packageType], options.assets.filesRoot, packageGroupDirectory, suffix, '\n\n');
         }
     }
 
@@ -325,34 +325,29 @@ module.exports = function(grunt) {
             options.assets.templatesPath = '.';
         }
 
-        if(options.assets.sourcesPath === undefined || options.assets.sourcesPath === ''){
-            options.assets.sourcesPath = '.';
+        if(options.assets.filesRoot === undefined || options.assets.filesRoot === ''){
+            options.assets.filesRoot = '.';
         }
 
         if(options.assets.packagedFilesPath === undefined || options.assets.packagedFilesPath === ''){
             options.assets.packagedFilesPath = '.';
         }
 
-        if(options.assets.partialPath === undefined || options.assets.partialPath === ''){
-            options.assets.partialPath = options.assets.templatesPath + '/../partials/';
-            options.assets.partialPathExtension = '.html';
+        if(options.assets.helperExtension === undefined || options.assets.helperExtension === ''){
+            options.assets.helperExtension = 'js';
         }else{
-            options.assets.partialPathExtension = options.assets.partialPath.substr(options.assets.partialPath.lastIndexOf('.'));
-            if(options.assets.partialPath.indexOf('*') !== -1){
-                options.assets.partialPath = options.assets.partialPath.substr(0,options.assets.partialPath.indexOf('*'));
+            if(options.assets.helperExtension.indexOf('.') === 0){
+                options.assets.helperExtension = options.assets.helperExtension.substr(1);
             }
         }
-        if(options.assets.partialPath.charAt(options.assets.partialPath.length-1) !== '/'){
-            options.assets.partialPath += '/';
-        }
 
-        if(options.assets.helperPath === undefined || options.assets.helperPath === ''){
-            options.assets.helperPath = options.assets.templatesPath + '/../helpers/';
+        if(options.assets.partialExtension === undefined || options.assets.partialExtension === ''){
+            options.assets.partialExtension = 'html';
+        }else{
+            if(options.assets.partialExtension.indexOf('.') === 0){
+                options.assets.partialExtension = options.assets.partialExtension.substr(1);
+            }
         }
-        if(options.assets.helperPath.charAt(options.assets.helperPath.length-1) !== '/'){
-            options.assets.helperPath += '/';
-        }
-        options.assets.helperPathExtension = '.js';
 
         if(options.assets.concatenate === undefined || options.assets.concatenate === ''){
             options.assets.concatenate = false;
@@ -429,7 +424,7 @@ module.exports = function(grunt) {
                         while (ip < ipl) {
                             var partialPath = context.partials[ip];
                             var partialName = partialPath.replace(/^[.*][/]/, '');
-                            var partial = getResourceText(options.assets.partialPath + partialPath + options.assets.partialPathExtension);
+                            var partial = getResourceText(options.assets.partialPath + partialPath + '.' + options.assets.partialExtension);
                             context.handlebarsInstance.registerPartial(partialName, partial);
                             ip++;
                         }
@@ -444,7 +439,7 @@ module.exports = function(grunt) {
                             var helperPath = context.helpers[ih];
                             helperPath = process.cwd() + '/' + options.assets.helperPath + helperPath;
                             var helperName = helperPath.split('/').pop();
-                            helperPath += options.assets.helperPathExtension;
+                            helperPath += '.'+options.assets.helperExtension;
                             var helper = require(helperPath);
                             context.handlebarsInstance.registerHelper(helperName, helper);
                             ih++;
@@ -497,7 +492,7 @@ module.exports = function(grunt) {
             json:'',
             assets:{
                 templatesPath:'.',
-                sourcesPath:'.',
+                filesRoot:'.',
                 packagedFilesPath:'.',
                 concatenate:false,
                 ignoreHelper:false
@@ -508,7 +503,7 @@ module.exports = function(grunt) {
         //check if source view assets are copied
         if(options.sourceView){
             //copy files
-            initiateSourceViewFiles(options.assets.sourcesPath);
+            initiateSourceViewFiles(options.assets.filesRoot);
         }
 
         //check if assets is incomplete
@@ -543,8 +538,14 @@ module.exports = function(grunt) {
 
         //retrieve base folders to copy correctly into destination folders
         options.assets.templatesPath = baseDirectory(this.data.files,this.target);
+
+        //define helper/partial paths
+        var parentDirectory = options.assets.templatesPath.substr(0,options.assets.templatesPath.lastIndexOf('/'));
+        options.assets.helperPath = parentDirectory+'/helpers/';
+        options.assets.partialPath = parentDirectory+'/partials/';
+
         //======= DEFAULT VALUES =======
-        grunt.log.write('Rendering "'+this.target+'" ...\n');
+        grunt.log.write('Rendering "'+this.target+'" ... ');
 
         // Iterate over all specified file groups.
         var i = 0;
@@ -576,9 +577,9 @@ module.exports = function(grunt) {
         }else{
             logDebug('Skipping generation of packages');
             //use grunt-contrib-copy is more obvious
-            if(options.assets.sourcesPath !== '.'){
+            if(options.assets.filesRoot !== '.'){
                 grunt.log.subhead('COPY WARNING!');
-                grunt.log.error('Copy your assets from "'+options.assets.sourcesPath+'" to the correct folder you\'d like to use. (grunt-contrib-copy)');
+                grunt.log.error('Copy your assets from "'+options.assets.filesRoot+'" to the correct folder you\'d like to use. (grunt-contrib-copy)');
             }
         }
 
