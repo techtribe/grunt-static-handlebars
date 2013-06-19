@@ -39,8 +39,26 @@ grunt.initConfig({
 })
 ```
 
+The provided "files"-directory will be used as a templates directory. See below for more information how to define your templates directory.
+
 ### Options
 Options can reside in the general definition of this plugin or inside any task-options to overrule or define the options to use with that (sub)task.
+
+##### Default value
+
+```js
+options:{
+	assets:{
+		filesRoot:'.', //directory where your files reside
+		packagedFilesPath:'.', //optional
+		partialExtension: 'html', //optional
+		helperExtension: 'js', //optional
+		ignoreHelper:false, //optional
+	},
+	json: '{}', //optional
+	sourceView:true //optional
+}
+```
 
 #### assets
 Type: `Object`
@@ -49,79 +67,15 @@ An object to configure the use of ```{{staticHandlebarsFiles}}``` or your own he
 
 _Note: if you use this plugin for non-html files you can ignore this option as long as you don't use ```{{staticHandlebarsFiles}}``` in your Handlebars templates._
 
-##### Default value
-
-```js
-{
-	templatesPath:'.',//optional
-	filesRoot:'.',
-	packagedFilesPath:'.', //optional
-	ignoreHelper:false, //optional
-	partialPath: './../partials', //optional
-	helperPath: './../partials', //optional
-}
-```
-
-where in ```.json``` files you can add
-
-```json
-{
-    "extends": [ "base.json" ],
-    "targetPath" : "contact.html",
-    "assetsUrlPrefix": "/"
-    "files%add": [
-        "/css/homepage.css",
-        "/js/homepage.js"
-    ],
-    "partials%add": [],
-    "helpers%add": [],
-    "title":"A new page title.",
-    "page":{
-        "title":"Welcome",
-        "content":"At our new test site."
-    },
-    "footer":"Some contact information about how to get in touch with us."
-}
-```
-to use as input for the processing of files. This means that this Handlebars template: 
-
-* use ```base.json``` as source for the ```files```-list
-* use extra files only for this template with ```files%add```
-* use extra context like title / page to use in your template as ```{{title}}``` and ```{{page.title}}```
-* use ```targetPath``` to adjust the name of the file being saved relative to the working directory.
-* ```%add``` is synonym to extending the properties ```files```,```partials```,```helpers```. You can also overwrite, but could introduce new issues due to expected results.
-* ```partials``` are the needed partials for this page. Use ```partialPath``` to define the source directory for these partials and the extension being used if they are not ```./../partials``` and ```.html```
-* ```helpers``` are the needed helpers for this page. Use ```helperPath``` to define the source directory for these helpers. The only extension allowed is ```.js```
-
-##### assets.templatePath (optional)
-Type: `String`  
-Default value: `.`  
-Already set but you can override the base path to find your base context-files that are used in ```.json``` as the ```extends:['base.json']``` mechanism to keep your ```files```-property in ```.json``` files small and in line with the desired base context to use.
-
 ##### assets.filesRoot
 Type: `String`  
 Default value: `.`  
 Define the path where your sources (so what comes before ```js/base.js```) originating from the ```Gruntfile.js``` directory.
 
-##### assets.assetsUrlPrefix
-Type: `String`  
-Default value: `/`  
-Define the path which is used inside the processed ```.html``` files (like ```/js/base.js```).
-
 ##### assets.packagedFilesPath (optional)
 Type: `String`  
 Default value: `.`  
 Define the path where all concatenated files will be put. These files are all combinations of (separate) ```js``` or ```css``` files. You can choose to put them in an alternate folder to minify (```grunt-contrib-uglify``` or ```grunt-contrib-cssmin```) or put them in the production folder.
-
-##### assets.partialPath (optional)
-Type: `String`  
-Default value: `./../partials`  
-Default directory where all partials are stored. By using ```custom/directory/*.hbp``` you can also define different extension is you wish to use. See ```partials``` property in your ```json``` context files for the file to use (without an extension).
-
-##### assets.helperPath (optional)
-Type: `String`  
-Default value: `./../helpers`  
-Default directory where all partials are stored. Only ```js``` files are used, so provide the default folder and all ```js``` files will be accessible in your ```json``` context files. (see ```helpers``` property)
 
 ##### assets.ignoreHelper (optional)
 Type: `Boolean`  
@@ -193,16 +147,58 @@ grunt.initConfig({
 ```
 
 Some remarks:
-* ```.hbt``` are [Handlebars](http://handlebarsjs.com)-templates but can be any extension (```.html```, ```.hbs```, etc)
-* ```.hbp``` are [Handlebars](http://handlebarsjs.com)-partials but can be any extension (```.html```, ```.hbs```, etc)
-* [Handlebars](http://handlebarsjs.com)-helpers are JS functions and therefore saved as ```.js``` files.
-* [Handlebars](http://handlebarsjs.com)-helpers can use:
-	* ```js Handlebars.compile``` can be used in partials/helpers (like the frontend way)
-	* ```js _``` can be used as ```lodash``` util class in your partials/helpers
-* ```.html``` files can also be referenced as "files" to use in your GruntFile
-* filenames can be connected by ```-```, ```+```,```_```
 * if [Handlebars](http://handlebarsjs.com)-templates have no markup (like ```{{```) it will copied as plaintext.
 * In any of the helpers you will need to replace the global `Handlebars` reference into `this.handlebarsInstance` to ensure the helper can parse Strings and use the needed functions.
+
+### Context
+Every Handlebars template need a context, this can be default ```js {}``` but also extended with more smart definitions.
+
+#### Example
+
+```json
+{
+    "extends": [ "base.json" ],
+    "targetPath" : "contact.html",
+    "assetsUrlPrefix": "/"
+    "files%add": [
+        "/css/homepage.css",
+        "/js/homepage.js"
+    ],
+    "partials%add": [],
+    "helpers%add": [],
+    "title":"A new page title.",
+    "page":{
+        "title":"Welcome",
+        "content":"At our new test site."
+    },
+    "footer":"Some contact information about how to get in touch with us."
+}
+```
+
+#### extends
+Use ```/base.json``` in your templates-directory (which you provide to grunt) to enable a default base-context-configuration that you can extend/overwrite per template.  
+```extends:['base.json','other.json']``` or ```extends:'base.json'``` use the provided files as default context. Every other property defined in a ```json```-file per template can add or overwrite properties in this context.
+
+#### targetPath
+Adjust the name of the file being saved relative to the working directory.
+
+#### assetsUrlPrefix
+Adjust the default URL prefix of ```/``` which will be used with all the files that are referenced with ```staticHandlebarsFiles``` helper. With this property you can move the files in a directory deeper (use case: Wordpress / CMS) like ```/assets```.
+
+#### files (base.json)
+All the necessary files to add (packaged) inside in the ```html <head/>``` rendered html file.
+
+#### partials (base.json)
+All the necessary partials to use to render the HTML.
+
+#### helpers (base.json)
+All the necessary helpers to use to render the HTML.
+
+#### helpers%add / partails%add / files%add
+Extend the ```json base.json``` file with additional partials, helpers and/or files for only this specific Handlebars template.
+
+#### xxx
+Use any properties that you like to add onto the context-object that will be used to render your Handlebars template. For example ```title``` can be defined inside the ```json``` file matching the filename of the template. Inside the template you will find ```{{title}}``` to position that value correctly in the ```html```. See [Handlebars](http://handlebarsjs.com) for more information about nesting context (properties).
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
@@ -225,8 +221,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 ## TODO
 * (?) option to provide string and no json-files as partials/helpers
 * (?) cli-option
-* (?) add or ignore target.options.partials/helpers
 * (?) detect duplicate definitions of context &amp; helpers/partials
-* (?) use lowercase to detect wrong definitions of code or not useful
+* (?) use lowercase to detect wrong definitions of code or not useful?
 * ! use target-directory for targetPath > check destination for that?
 * Provide single json/context to all files inside Gruntfile.js
