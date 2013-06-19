@@ -240,6 +240,9 @@ module.exports = function(grunt) {
 
     function getResourceText(name) {
         grunt.log.debug('Get resource text:', name, process.cwd());
+        if(!grunt.file.exists(name)){
+          grunt.fail.warn('Could not retrieve file "'+name+'" \nThis is needed for defining the context of a Handlebars template.\nSee documentation for more information.');
+        }
         return grunt.file.read(name, { encoding: 'utf8' });
     }
 
