@@ -9,7 +9,7 @@ module.exports = function(){
 
     var output = '';
     _.each(this.files, function(itemSpec){
-        itemSpec = resource(itemSpec);
+        itemSpec = resource(itemSpec,assetsPath);
         logDebug('Item specification:', itemSpec);
         var suffix = '';
         if (itemSpec.ieComparator && itemSpec.ieVersion) {
