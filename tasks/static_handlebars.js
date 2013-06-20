@@ -500,14 +500,14 @@ module.exports = function(grunt) {
             sourceView:false
         });
 
+        //check if assets is incomplete
+        initiateAssetsObject(options);
+
         //check if source view assets are copied
         if(options.sourceView){
             //copy files
             initiateSourceViewFiles(options.assets.filesRoot);
         }
-
-        //check if assets is incomplete
-        initiateAssetsObject(options);
 
         var applicationContext = {
             getResourceObject: getResourceObject,
@@ -541,6 +541,9 @@ module.exports = function(grunt) {
 
         //define helper/partial paths
         var parentDirectory = options.assets.templatesPath.substr(0,options.assets.templatesPath.lastIndexOf('/'));
+        if(parentDirectory === ''){
+            parentDirectory = '.';
+        }
         options.assets.helperPath = parentDirectory+'/helpers/';
         options.assets.partialPath = parentDirectory+'/partials/';
 
