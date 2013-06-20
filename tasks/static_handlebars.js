@@ -547,6 +547,16 @@ module.exports = function(grunt) {
         options.assets.helperPath = parentDirectory+'/helpers/';
         options.assets.partialPath = parentDirectory+'/partials/';
 
+        //retrieve assetsUrlPrefix if available
+        if(grunt.file.exists(options.assets.templatesPath+'/base.json')){
+            var jsonData = grunt.file.read(options.assets.templatesPath+'/base.json');
+            try{
+                options.assets.assetsUrlPrefix = JSON.parse(jsonData).assetsUrlPrefix;
+            }catch(e){
+                grunt.fail.warn('Invalid JSON file at '+options.assets.templatesPath+'/base.json ('+ e.message+')');
+            }
+        }
+
         //======= DEFAULT VALUES =======
         grunt.log.write('Rendering "'+this.target+'" ... ');
 
