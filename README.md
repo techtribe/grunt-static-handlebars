@@ -1,3 +1,5 @@
+[![NPM version](https://badge.fury.io/js/grunt-static-handlebars.png)](http://badge.fury.io/js/grunt-static-handlebars)
+
 # GRUNT-STATIC-HANDLEBARS
 
 > Compile your handlebars templates into static html files.
