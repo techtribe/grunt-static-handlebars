@@ -84,6 +84,16 @@ Type: `Boolean`
 Default value: `false`  
 If you would like to overwrite the use of ```{{staticHandlebarsFiles}}``` inside your templates, reset to true and register your own helper with the ```staticHandlebarsFiles``` name.
 
+##### assets.partialExtension (optional)
+Type: `String`  
+Default value: `html`  
+Default extension for partials. Used to distinguish the files to use and ignore temp / property files.
+
+##### assets.helperExtension (optional)
+Type: `String`  
+Default value: `js`  
+Default extension for helpers. Used to distinguish the files to use and ignore temp / property files.
+
 #### json (optional)
 Type: `String` or `Array`  
 Default value: `''`  
@@ -196,8 +206,8 @@ All the necessary partials to use to render the HTML.
 #### helpers (base.json)
 All the necessary helpers to use to render the HTML.
 
-#### helpers%add / partails%add / files%add
-Extend the ```json base.json``` file with additional partials, helpers and/or files for only this specific Handlebars template.
+#### helpers%add, partails%add, files%add
+Extend the ```json base.json``` file with additional partials, helpers and/or files for only this specific Handlebars template. This Array will be concatenated with the Array in ```base.json```.
 
 #### xxx
 Use any properties that you like to add onto the context-object that will be used to render your Handlebars template. For example ```title``` can be defined inside the ```json``` file matching the filename of the template. Inside the template you will find ```{{title}}``` to position that value correctly in the ```html```. See [Handlebars](http://handlebarsjs.com) for more information about nesting context (properties).
@@ -206,7 +216,7 @@ Use any properties that you like to add onto the context-object that will be use
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-0.9.0 - More restricted approach to streamline all options so it will also work in the sourceView + documentation updated
+0.9.0 - More restricted approach to streamline all options so it will also work in the sourceView + documentation updated  
 0.8.1 - Source-view feature added + example added  
 0.7.1 - Cleanup of documentation + more generic approach to partials/helpers definition  
 0.7.0 - Rewrote plugin to support more advanced usage of partials/helpers per page.  
