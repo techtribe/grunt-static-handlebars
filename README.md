@@ -211,7 +211,7 @@ If you have conditions to embed like
 you can add it like this:  
 ```json
 {
-	files:[
+	"files":[
 		{
 			"path": "js-lib/html5shiv.js",
 			"qualifier": "IE-lt-9",
