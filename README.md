@@ -204,8 +204,8 @@ If you have conditions to embed like
 ```html
 <head>
 	<!--[if lt IE 9]>
-	<script src="dist/html5shiv.js"></script>
-	<![endif]--
+	<script src="js-lib/html5shiv.js"></script>
+	<![endif]-->
 </head>
 ```
 you can add it like this:  
