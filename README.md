@@ -215,7 +215,7 @@ you can add it like this:
 		{
 			"path": "js-lib/html5shiv.js",
 			"qualifier": "IE-lt-9",
-			"ieVersion": "9"}
+			"ieVersion": "9"
 		}
 	]
 }
