@@ -200,6 +200,27 @@ Adjust the default URL prefix of ```/``` which will be used with all the files t
 #### files (base.json)
 All the necessary files to add (packaged) inside in the ```html <head/>``` rendered html file.
 
+If you have conditions to embed like  
+```html
+<head>
+	<!--[if lt IE 9]>
+	<script src="dist/html5shiv.js"></script>
+	<![endif]--
+</head>
+```
+you can add it like this:  
+```json
+{
+	files:[
+		{
+			"path": "js-lib/html5shiv.js",
+			"qualifier": "IE-lt-9",
+			"ieVersion": "9"}
+		}
+	]
+}
+```
+
 #### partials (base.json)
 All the necessary partials to use to render the HTML.
 
