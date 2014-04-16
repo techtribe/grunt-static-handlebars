@@ -544,8 +544,8 @@ module.exports = function(grunt) {
         if(parentDirectory === ''){
             parentDirectory = '.';
         }
-        options.assets.helperPath = parentDirectory+'/helpers/';
-        options.assets.partialPath = parentDirectory+'/partials/';
+        options.assets.helperPath = options.assets.helpersPath || parentDirectory+'/helpers/';
+        options.assets.partialPath = options.assets.partialPath || parentDirectory+'/partials/';
 
         //retrieve assetsUrlPrefix if available
         if(grunt.file.exists(options.assets.templatesPath+'/base.json')){
